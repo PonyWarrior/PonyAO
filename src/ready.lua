@@ -94,6 +94,39 @@ if config.HexChanges.Enabled then
 	end
 end
 
+if config.TorchImprovements.Enabled then
+	local projectileFile = rom.path.combine(rom.paths.Content, 'Game/Projectiles/PlayerProjectiles.sjson')
+
+	sjson.hook(projectileFile, function(sjsonData)
+		return sjson_TorchProjectile(sjsonData)
+	end)
+
+	function sjson_TorchProjectile(sjsonData)
+		for _, v in ipairs(sjsonData.Projectiles) do
+			if v.Name == "ProjectileTorchBall" then
+				v.MaxAdjustRate = 1800
+				v.AdjustRateAcceleration = 450
+			elseif v.Name == "ProjectileTorchSpiral" or v.Name == "ProjectileTorchOrbit" then
+				v.Effects[1].Active = true
+			end
+		end
+	end
+
+	local weaponFile = rom.path.combine(rom.paths.Content, 'Game/Weapons/PlayerWeapons.sjson')
+
+	sjson.hook(weaponFile, function(sjsonData)
+		return sjson_TorchWeapon(sjsonData)
+	end)
+
+	function sjson_TorchWeapon(sjsonData)
+		for _, v in ipairs(sjsonData.Weapons) do
+			if v.Name == "WeaponTorch" then
+				v.Cooldown = 0.33
+			end
+		end
+	end
+end
+
 if config.TestamentsChanges.Enabled then
 	local textfile = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
 

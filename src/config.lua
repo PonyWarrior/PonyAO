@@ -1,6 +1,10 @@
 ---@meta PonyWarrior-PonyAO-config
 local config = {
 	enabled = true,
+	TorchImprovements = {
+		Enabled = true,
+		AttackSpeed = 0.33
+	},
 	TranquilGainRework = {
 		Enabled = true,
 		InitialDelay = 3.0,
@@ -72,6 +76,10 @@ local config = {
 
 local description = {
 	enabled = "Set to true to enable the mod, set to false to disable it.",
+	TorchImprovements = {
+		Enabled = "Enable to improve the torches, increasing their attack speed, giving attacks homing and making specials stagger enemies.",
+		AttackSpeed = "Set a custom attack speed. Original is 0.45."
+	},
 	TranquilGainRework = {
 		Enabled = "Enable to rework Demeter's Tranquil Gain. When your Magick falls under a percentage, your magick is fully restored after a delay. This delay increases every time this occurs, resetting each location.",
 		InitialDelay = "Initial delay before regenerating magick.",

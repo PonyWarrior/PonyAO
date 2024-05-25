@@ -3,11 +3,11 @@ schemaVersion = "0.0.1"
 
 
 [package]
-namespace = "AuthorName"
-name = "ModName"
+namespace = "PonyWarrior"
+name = "PonyAO"
 versionNumber = "0.0.0"
-description = "Allows to do some super duper thing."
-websiteUrl = "https://github.com/AuthorName/ModName"
+description = "Overhauls different aspects of the game, fully configurable."
+websiteUrl = "https://github.com/PonyWarrior/PonyAO"
 containsNsfwContent = false
 
 [package.dependencies]
