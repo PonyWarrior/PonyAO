@@ -13,6 +13,8 @@ ModUtil.LoadOnce(function()
 	rom.data.reload_game_data()
 end)
 
+-- rom.inputs.on_key_pressed("None E", function() print("hi") end)
+
 if config.TranquilGainRework.Enabled then
 	local textfile = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
 
@@ -67,9 +69,10 @@ end
 
 if config.WhiteAntlerHealthCap.Enabled then
 	ModUtil.Path.Wrap("ValidateMaxHealth", function(base, blockDelta)
-		if HeroHasTrait("LowHealthCritKeepsake") then
+		if HeroHasTrait("LowHealthCritKeepsake") or GameState.LastAwardTrait == "LowHealthCritKeepsake" then
 			ValidateMaxHealth_wrap(blockDelta)
 		else
+
 			base(blockDelta)
 		end
 	end)
@@ -78,7 +81,7 @@ if config.WhiteAntlerHealthCap.Enabled then
 		ModUtil.Path.Wrap("UnequipKeepsake", function(base, heroUnit, traitName)
 			base(heroUnit, traitName)
 			if traitName == "LowHealthCritKeepsake" then
-				ValidateMaxHealth()
+				ValidateMaxHealth_wrap()
 			end
 		end)
 	end)
@@ -452,8 +455,8 @@ if config.CardChanges.Enabled then
 		end)
 
 		OverwriteTableKeys(TraitData.MetaToRunMetaUpgrade, {
-			MetaConversionUses = {},
-			ExtractValues = {},
+			MetaConversionUses = nil,
+			ExtractValues = nil
 		})
 
 		ModUtil.Path.Wrap("EquipKeepsake", function(base, heroUnit, traitName, args)

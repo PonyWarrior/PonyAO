@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed a crash with the artificer card
+
 ## [0.2.0] - 2024-05-28
 
 ### Added
