@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2024-05-28
+
 ### Added
 
 - StaffImprovements
@@ -23,5 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version of the mod!
 
-[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.1.0...HEAD
+[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/PonyWarrior/PonyAO/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/PonyWarrior/PonyAO/compare/d8fa0a8da1d88e9391bad80e391aaf05924800aa...0.1.0
