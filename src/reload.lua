@@ -58,6 +58,7 @@ if config.WhiteAntlerHealthCap.Enabled then
 	end
 
 	function ValidateMaxHealth_wrap(blockDelta)
+		-- todo : make max health rewards that heal work
 		local expectedMaxHealth = HeroData.MaxHealth
 		expectedMaxHealth = math.max(1, round(expectedMaxHealth * GetTotalHeroTraitValue("MaxHealthMultiplier", { IsMultiplier = true })))
 		if expectedMaxHealth ~= CurrentRun.Hero.MaxHealth then
@@ -81,10 +82,40 @@ if config.WhiteAntlerHealthCap.Enabled then
 	end
 end
 
-if config.AxeSpecialUnlimitedBlock.Enabled then
-	OverwriteTableKeys(WeaponData.WeaponAxeBlock2.ChargeWeaponStages[1], {
-		ForceRelease = false,
-	})
+if config.CardChanges.Enabled then
+	if config.CardChanges.Artificer.Enabled then
+
+		function EquipKeepsake_wrap(heroUnit, traitName, args)
+			local unit = heroUnit or CurrentRun.Hero
+			traitName = traitName or GameState.LastAwardTrait
+			if traitName == nil or HeroHasTrait(traitName) then
+				return
+			end
+
+			local rarity = GetRarityKey(GetKeepsakeLevel(traitName))
+			rarity = GetUpgradedRarity(rarity)
+			print(rarity)
+			local traitData = AddTrait(unit, traitName, rarity, args)
+			if not CurrentRun.Hero.IsDead then
+				CurrentRun.TraitCache[traitName] = CurrentRun.TraitCache[traitName] or 1
+			end
+
+			if traitName == "DecayingBoostKeepsake" then
+				traitData.CurrentKeepsakeDamageBonus = traitData.InitialKeepsakeDamageBonus
+			end
+			if traitName == "ReincarnationKeepsake" then
+				AddLastStand({
+					Name = "ReincarnationKeepsake",
+					ExpiresKeepsake = "ReincarnationKeepsake",
+					InsertAtEnd = true,
+					IncreaseMax = true,
+					Icon = "ExtraLifeSkelly",
+					HealAmount = GetTotalHeroTraitValue("KeepsakeLastStandHealAmount"),
+				})
+				RecreateLifePips()
+			end
+		end
+	end
 end
 
 if config.TestamentsChanges.Enabled then

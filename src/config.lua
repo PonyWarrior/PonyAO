@@ -5,6 +5,35 @@ local config = {
 		Enabled = true,
 		AttackSpeed = 0.33
 	},
+	StaffImprovements = {
+		Enabled = true,
+		OmegaAttackChargeSpeed = 0.6
+	},
+	SkullImprovements = {
+		Enabled = true,
+		PickupRange = 500
+	},
+	CardChanges = {
+		Enabled = true,
+		SwiftRunner = {
+			Enabled = true
+		},
+		Messenger = {
+			Enabled = true
+		},
+		Night = {
+			Enabled = true
+		},
+		Unseen = {
+			Enabled = true
+		},
+		Death = {
+			Enabled = true
+		},
+		Artificer = {
+			Enabled = true
+		},
+	},
 	TranquilGainRework = {
 		Enabled = true,
 		InitialDelay = 3.0,
@@ -79,6 +108,35 @@ local description = {
 	TorchImprovements = {
 		Enabled = "Enable to improve the torches, increasing their attack speed, giving attacks homing and making specials stagger enemies.",
 		AttackSpeed = "Set a custom attack speed. Original is 0.45."
+	},
+	StaffImprovements = {
+		Enabled = "Enable to improve the staff, letting you charge the omega attack faster and release it whenever you want, plus making the special fire full auto and charge the omega special while shooting the regular special.",
+		OmegaAttackChargeSpeed = "Set a custom charge time for the omega attack. Original is 0.8."
+	},
+	SkullImprovements = {
+		Enabled = "Enable to improve the skull, increasing the ammo pickup range.",
+		PickupRange = "Set a custom pickup range. Original is 250."
+	},
+	CardChanges = {
+		Enabled = "Enable to improve the altar of ashes' cards.",
+		SwiftRunner = {
+			Enabled = "Enable to make the swift runner increase the number of dashes you can do by 1 (at all ranks)."
+		},
+		Messenger = {
+			Enabled = "Enable to make the messenger increase your movement speed by 6/9/12/15%."
+		},
+		Night = {
+			Enabled = "Enable to make night increase your omega channeling speed by 10/17/23/30%."
+		},
+		Unseen = {
+			Enabled = "Enable to make the unseen cost 2 grasp instead of 5."
+		},
+		Death = {
+			Enabled = "Enable to make death increase your omega damage by 15/27/38/50%."
+		},
+		Artificer = {
+			Enabled = "Enable to make the artificer increase the rarity of your keepsakes by 1 level (at all ranks)."
+		},
 	},
 	TranquilGainRework = {
 		Enabled = "Enable to rework Demeter's Tranquil Gain. When your Magick falls under a percentage, your magick is fully restored after a delay. This delay increases every time this occurs, resetting each location.",
