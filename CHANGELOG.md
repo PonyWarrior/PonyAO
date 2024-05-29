@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2024-05-29
+
 ### Fixed
 
 - Fixed Death card rarity multipliers
@@ -35,7 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version of the mod!
 
-[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.2.1...HEAD
+[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.2.2...HEAD
+[0.2.2]: https://github.com/PonyWarrior/PonyAO/compare/0.2.1...0.2.2
 [0.2.1]: https://github.com/PonyWarrior/PonyAO/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/PonyWarrior/PonyAO/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/PonyWarrior/PonyAO/compare/d8fa0a8da1d88e9391bad80e391aaf05924800aa...0.1.0
