@@ -9,12 +9,6 @@
 
 mod = modutil.mod.Mod.Register(_PLUGIN.guid)
 
-ModUtil.LoadOnce(function()
-	rom.data.reload_game_data()
-end)
-
--- rom.inputs.on_key_pressed("None E", function() print("hi") end)
-
 if config.TranquilGainRework.Enabled then
 	local textfile = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
 
@@ -72,7 +66,6 @@ if config.WhiteAntlerHealthCap.Enabled then
 		if HeroHasTrait("LowHealthCritKeepsake") or GameState.LastAwardTrait == "LowHealthCritKeepsake" then
 			ValidateMaxHealth_wrap(blockDelta)
 		else
-
 			base(blockDelta)
 		end
 	end)
@@ -393,15 +386,15 @@ if config.CardChanges.Enabled then
 				},
 				Rare =
 				{
-					Multiplier = 1.1
+					Multiplier = 1.8
 				},
 				Epic =
 				{
-					Multiplier = 1.2,
+					Multiplier = 2.54,
 				},
 				Heroic =
 				{
-					Multiplier = 1.3,
+					Multiplier = 3.34,
 				}
 			},
 			AddOutgoingDamageModifiers =
