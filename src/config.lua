@@ -101,6 +101,9 @@ local config = {
 			Enabled = true
 		},
 	},
+    PolyphemusJumpFix = {
+        Enabled = true
+    },
 }
 
 local description = {
@@ -204,6 +207,9 @@ local description = {
 		VowOfArrogance = {
 			Enabled = "Enable to add higher levels to the vow of arrogance."
 		},
+	},
+    PolyphemusJumpFix = {
+		Enabled = "Enable to remove the damage from Polyphemus' jump windup attack"
 	},
 }
 
