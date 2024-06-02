@@ -545,3 +545,17 @@ if config.TestamentsChanges.Enabled then
 		end)
 	end
 end
+
+if config.PolyphemusJumpFix.Enabled then
+	local projectileFile = rom.path.combine(rom.paths.Content, 'Game/Projectiles/EnemyProjectiles.sjson')
+
+    sjson.hook(projectileFile, function(sjsonData)
+        print("Hook")
+        for _, v in ipairs(sjsonData.Projectiles) do
+            if v.Name == "PolyphemusLeapKnockback" then
+                v.Damage = 0
+            end
+        end
+        print("Done")
+    end)
+end
