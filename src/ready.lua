@@ -88,6 +88,8 @@ if config.HexChanges.Enabled then
 			SetPlayerVulnerable("StartSpellCharge")
 		end)
 	end
+
+	
 end
 
 if config.TorchImprovements.Enabled then
@@ -546,16 +548,66 @@ if config.TestamentsChanges.Enabled then
 	end
 end
 
-if config.PolyphemusJumpFix.Enabled then
+if config.PolyphemusJump.Enabled then
 	local projectileFile = rom.path.combine(rom.paths.Content, 'Game/Projectiles/EnemyProjectiles.sjson')
 
-    sjson.hook(projectileFile, function(sjsonData)
-        print("Hook")
-        for _, v in ipairs(sjsonData.Projectiles) do
-            if v.Name == "PolyphemusLeapKnockback" then
-                v.Damage = 0
-            end
-        end
-        print("Done")
-    end)
+	sjson.hook(projectileFile, function(sjsonData)
+		for _, v in ipairs(sjsonData.Projectiles) do
+			if v.Name == "PolyphemusLeapKnockback" then
+				v.Damage = config.PolyphemusJump.DamageValue
+				if config.PolyphemusJump.EnableStun then
+					for _, value in ipairs(v.Effects) do
+						if value.Name == "HeroOnHitStun" then
+							value.Duration = config.PolyphemusJump.StunDuration
+							value.FrontFx = "DionysusStunnedFx"
+							value.Cancelable = false
+						end
+					end
+				end
+			end
+		end
+	end)
+end
+
+if config.TroveChanges.Enabled then
+	if config.TroveChanges.EqualWeight.Enabled then
+		EncounterSets.TimeChallengeOptions = {
+			"MoneyTimeChallengeSwitch",
+			--"MoneyTimeChallengeSwitch2",
+			--"MoneyTimeChallengeSwitch3",
+
+			"HealthTimeChallengeSwitch",
+			--"HealthTimeChallengeSwitch2",
+			--"HealthTimeChallengeSwitch3",
+
+			"MetaCurrencyTimeChallengeSwitch",
+			--"MetaCurrencyTimeChallengeSwitch2",
+			--"MetaCurrencyTimeChallengeSwitch3",
+		}
+	end
+	if config.TroveChanges.DisableDecay.Enabled then
+		ObstacleData.HealthTimeChallengeSwitch.UseLootDecay = false
+		ObstacleData.MetaCurrencyTimeChallengeSwitch.UseLootDecay = false
+		ObstacleData.MoneyTimeChallengeSwitch.UseLootDecay = false
+	end
+	if config.TroveChanges.EnableHealthTroves.Enabled then
+		for index, req in ipairs(ObstacleData.HealthTimeChallengeSwitch.Requirements) do
+			if req.PathTrue and Contains(req.PathTrue, "TimeChallenge") then
+				ObstacleData.HealthTimeChallengeSwitch.Requirements[index] = {
+					Path = { "GameState", "EncountersCompletedCache" },
+					HasAny = { "TimeChallengeF", "TimeChallengeG", "TimeChallengeI", "TimeChallengeO" }
+				}
+			end
+		end
+	end
+	if config.TroveChanges.EnableBoneTroves then
+		for index, req in ipairs(ObstacleData.MetaCurrencyTimeChallengeSwitch.Requirements) do
+			if req.PathTrue and Contains(req.PathTrue, "TimeChallenge") then
+				ObstacleData.MetaCurrencyTimeChallengeSwitch.Requirements[index] = {
+					Path = { "GameState", "EncountersCompletedCache" },
+					HasAny = { "TimeChallengeF", "TimeChallengeG", "TimeChallengeI", "TimeChallengeO" }
+				}
+			end
+		end
+	end
 end

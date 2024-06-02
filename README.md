@@ -30,3 +30,11 @@ Overhauls different aspects of the game, fully configurable.
   - HexChargeInvulnerable : Makes the player invulnerable during hex charging animations.
 
 - TestamentsChanges : Adds missing intermediate ranks to certain vows and adds higher level ranks to many vows, up to rank 13.
+
+- PolyphemusJump : Removes the damage from Polyphemus' jump windup attack and make it stun the player briefly instead.
+
+- TroveChanges : Makes various changes to the troves.
+
+## Credits
+
+- zannc for PolyphemusJump

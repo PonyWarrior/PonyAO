@@ -101,19 +101,39 @@ local config = {
 			Enabled = true
 		},
 	},
-    PolyphemusJumpFix = {
-        Enabled = true
-    },
+	PolyphemusJump = {
+		Enabled = true,
+		DamageValue = 0,
+		EnableStun = true,
+		StunDuration = 0.4,
+	},
+	TroveChanges = {
+		Enabled = true,
+		DisableDecay = {
+			Enabled = true
+		},
+		EqualWeight = {
+			Enabled = true
+		},
+		EnableHealthTroves = {
+			Enabled = true
+		},
+		EnableBoneTroves = {
+			Enabled = true
+		},
+	}
 }
 
 local description = {
 	enabled = "Set to true to enable the mod, set to false to disable it.",
 	TorchImprovements = {
-		Enabled = "Enable to improve the torches, increasing their attack speed, giving attacks homing and making specials stagger enemies.",
+		Enabled =
+		"Enable to improve the torches, increasing their attack speed, giving attacks homing and making specials stagger enemies.",
 		AttackSpeed = "Set a custom attack speed. Original is 0.45."
 	},
 	StaffImprovements = {
-		Enabled = "Enable to improve the staff, letting you charge the omega attack faster and release it whenever you want, plus making the special fire full auto and charge the omega special while shooting the regular special.",
+		Enabled =
+		"Enable to improve the staff, letting you charge the omega attack faster and release it whenever you want, plus making the special fire full auto and charge the omega special while shooting the regular special.",
 		OmegaAttackChargeSpeed = "Set a custom charge time for the omega attack. Original is 0.8."
 	},
 	SkullImprovements = {
@@ -142,7 +162,8 @@ local description = {
 		},
 	},
 	TranquilGainRework = {
-		Enabled = "Enable to rework Demeter's Tranquil Gain. When your Magick falls under a percentage, your magick is fully restored after a delay. This delay increases every time this occurs, resetting each location.",
+		Enabled =
+		"Enable to rework Demeter's Tranquil Gain. When your Magick falls under a percentage, your magick is fully restored after a delay. This delay increases every time this occurs, resetting each location.",
 		InitialDelay = "Initial delay before regenerating magick.",
 		BaseDelayIncrease = "Base delay increase per time regeneration has occured in a location.",
 		ManaThreshold = "Mana threshold, will not regenerate above it.",
@@ -208,9 +229,27 @@ local description = {
 			Enabled = "Enable to add higher levels to the vow of arrogance."
 		},
 	},
-    PolyphemusJumpFix = {
-		Enabled = "Enable to remove the damage from Polyphemus' jump windup attack"
+	PolyphemusJump = {
+		Enabled = "Enable to remove the damage from Polyphemus' jump windup attack and make it stun the player briefly instead.",
+		DamageValue = "Set a custom damage value. Original is 11.",
+		EnableStun = "Enable to make the jump stun the player.",
+		StunDuration = "Set a custom duration for the stun. Original is 0.2.",
 	},
+	TroveChanges = {
+		Enabled = "Enable to make various changes to the troves.",
+		DisableDecay = {
+			Enabled = "Enable to disable the trove reward from decaying over time."
+		},
+		EqualWeight = {
+			Enabled = "Enable to make all 3 troves equally likely to appear. Gold trove is 3 times more likely to appear if disabled."
+		},
+		EnableHealthTroves = {
+			Enabled = "Enable to make troves containing health appear."
+		},
+		EnableBoneTroves = {
+			Enabled = "Enable to make troves containing bones appear."
+		},
+	}
 }
 
 return config, description
