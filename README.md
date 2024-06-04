@@ -35,6 +35,10 @@ Overhauls different aspects of the game, fully configurable.
 
 - TroveChanges : Makes various changes to the troves.
 
+- EchoKeepsakeChange : Makes Echo's keepsake duplicate your current reward on activation, with the number of occurences increasing per rank instead of the chance.
+
+- EphyraOverhaul : Overhauls Ephyra. 6 Rooms containing pylons are designated, and shown with PonyQOL2 installed. Completing rooms with no pylon does not increase the pylon counter, letting you complete more than 6. Every door in Ephyra is open and contains a reward. Completing the 6 pylon rooms unseals the boss room and locks all doors as normal. If you complete more than 6 rooms, each room you enter beyond the 6th will contain reinforcements from Tartarus.
+
 ## Credits
 
 - zannc for PolyphemusJump

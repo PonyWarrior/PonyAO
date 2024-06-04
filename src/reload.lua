@@ -84,7 +84,6 @@ end
 
 if config.CardChanges.Enabled then
 	if config.CardChanges.Artificer.Enabled then
-
 		function EquipKeepsake_wrap(heroUnit, traitName, args)
 			local unit = heroUnit or CurrentRun.Hero
 			traitName = traitName or GameState.LastAwardTrait
@@ -94,7 +93,6 @@ if config.CardChanges.Enabled then
 
 			local rarity = GetRarityKey(GetKeepsakeLevel(traitName))
 			rarity = GetUpgradedRarity(rarity)
-			print(rarity)
 			local traitData = AddTrait(unit, traitName, rarity, args)
 			if not CurrentRun.Hero.IsDead then
 				CurrentRun.TraitCache[traitName] = CurrentRun.TraitCache[traitName] or 1
@@ -557,5 +555,157 @@ if config.TestamentsChanges.Enabled then
 			{ Points = 4, ChangeValue = 15 }, -- 3
 			{ Points = 5, ChangeValue = 20 }, -- 4
 		})
+	end
+end
+
+if config.EchoKeepsakeChange.Enabled then
+	function HandleUpgradeChoiceSelection_wrap(screen, button, args)
+		local buttonId = button.Id
+		local upgradeData = button.Data
+		local currentRun = CurrentRun
+		args = args or {}
+
+		screen.ChoiceMade = true
+
+		currentRun.CurrentRoom.ReplacedTraitSource = nil
+
+		-- handle trait
+		local newTrait = nil
+		if upgradeData.TraitToReplace then
+			local numOldTrait = CurrentRun.Hero.TraitDictionary[upgradeData.TraitToReplace][1].StackNum or 1
+			numOldTrait = numOldTrait + GetTotalHeroTraitValue("ExchangeLevelBonus")
+			RemoveWeaponTrait(upgradeData.TraitToReplace)
+			newTrait = AddTraitToHero({ TraitData = upgradeData, FromLoot = true })
+			IncreaseTraitLevel(upgradeData, numOldTrait - 1)
+			currentRun.CurrentRoom.ReplacedTraitSource = GetLootSourceName(upgradeData.TraitToReplace)
+		else
+			if button.LootData.StackOnly and upgradeData.Name ~= "FallbackGold" then
+				local traitData = CurrentRun.Hero.TraitDictionary[upgradeData.Name][1]
+				if traitData then
+					IncreaseTraitLevel(traitData, button.LootData.StackNum)
+				end
+			else
+				if button.LootData.UpgradeOnPick then
+					local newButton = TryUpgradeBoon(button.LootData, screen, button)
+					if newButton then
+						upgradeData = newButton.Data
+						waitUnmodified(0.8)
+					end
+				end
+				newTrait = AddTraitToHero({ TraitData = upgradeData, PreProcessedForDisplay = true, FromLoot = true })
+			end
+		end
+		if button.LootData.BanUnpickedBoonsEligible and not args.DoubleBoonChance then
+			local numBans = MetaUpgradeData.BanUnpickedBoonsShrineUpgrade.ChangeValue
+			if numBans >= 1 then
+				local banCount = 0
+				for index, otherUpgradeButton in ipairs(screen.UpgradeButtons) do
+					if otherUpgradeButton.Data.Name ~= upgradeData.Name then
+						CurrentRun.BannedTraits[otherUpgradeButton.Data.Name] = true
+						thread(BanUnpickedBoonPresentation, screen, otherUpgradeButton)
+						banCount = banCount + 1
+						if banCount >= numBans then
+							break
+						end
+					end
+				end
+			end
+		end
+		LogUpgradeChoice(button)
+		PlaySound({ Name = button.LootData.UpgradeSelectedSound or "/SFX/HeatRewardDrop", Id = buttonId })
+		CreateAnimation({ Name = "BoonGetBlack", DestinationId = buttonId, Scale = 1.0, GroupName = "Combat_Menu" })
+		CreateAnimation({ Name = "BoonGet", DestinationId = buttonId, Scale = 1.0, GroupName = "Combat_Menu_Additive", Color = button.BoonGetColor or button.LootColor })
+		--wait( 0.4, RoomThreadName )
+		local source = screen.Source
+		local spawnTarget = nil
+		local duplicateOnClose = false
+		local name = source.Name
+		if source.CanDuplicate and RandomChance(GetTotalHeroTraitValue("DoubleRewardChance")) then
+			duplicateOnClose = true
+			spawnTarget = SpawnObstacle({ Name = "InvisibleTarget", Group = "Standing", DestinationId = source.ObjectId })
+		end
+		if source.DestroyOnPickup then
+			Destroy({ Id = source.ObjectId })
+			RemoveScreenEdgeIndicator(source)
+		end
+		MapState.RoomRequiredObjects[source.ObjectId] = nil
+		if source.LastRewardEligible then
+			CurrentRun.LastReward = { Type = "Boon", Name = source.Name, DisplayName = source.Name }
+		end
+		local doubleBoonTrait = HasHeroTraitValue("DoubleBoonChance")
+		if doubleBoonTrait
+			and doubleBoonTrait.Uses > 0
+			and not CurrentRun.CurrentRoom.EchoedReward
+			and button.LootData.GodLoot and not button.LootData.BlockDoubleBoon and RandomChance(doubleBoonTrait.DoubleBoonChance) then
+			CurrentRun.CurrentRoom.EchoedReward = true
+			waitUnmodified(0.8)
+			EchoKeepsakeReward()
+			ReduceTraitUses(doubleBoonTrait)
+		end
+
+		CloseUpgradeChoiceScreen(screen, button)
+		IncrementTableValue(GameState.LootPickups, button.UpgradeName)
+		CheckCodexUnlock("OlympianGods", button.UpgradeName)
+		CheckCodexUnlock("ChthonicGods", button.UpgradeName)
+		CheckCodexUnlock("Items", button.UpgradeName)
+		if not screen.SkipUpgradePresentationAndExitUnlock then
+			UpgradeAcquiredPresentation(screen, button.LootData)
+		end
+		if duplicateOnClose and spawnTarget then
+			local newLoot = CreateLoot({ Name = name, SpawnPoint = spawnTarget })
+			newLoot.CanDuplicate = false
+			thread(DoubleRewardPresentation, newLoot.ObjectId)
+			Destroy({ Id = spawnTarget })
+		end
+		if not screen.SkipUpgradePresentationAndExitUnlock then
+			waitUnmodified(0.2, RoomThreadName)
+			if CheckRoomExitsReady(CurrentRun.CurrentRoom) then
+				UnlockRoomExits(CurrentRun, CurrentRun.CurrentRoom)
+			end
+		end
+
+		CheckNewTraitManaReserveShrineUpgrade(newTrait)
+
+		SetLightBarColor({ PlayerIndex = 1, Color = CurrentRun.Hero.LightBarColor or { 0.0, 0.0, 0.0, 0.0 } })
+	end
+
+	function EchoKeepsakeReward()
+		local spawnPoint = GetClosest({ Id = CurrentRun.Hero.ObjectId, DestinationNames = "SpawnPoints" })
+		if spawnPoint == 0 then
+			spawnPoint = CurrentRun.Hero.ObjectId
+		end
+		CreateLoot({ Name = CurrentRun.LastReward.Name, SpawnPoint = spawnPoint })
+		EchoKeepsakeRewardPresentation(spawnPoint)
+	end
+
+	function EchoKeepsakeRewardPresentation(spawnPoint)
+		wait(0.05)
+
+		LoadVoiceBanks({ Name = "Echo" })
+		PlaySound({ Name = "/SFX/Menu Sounds/PortraitEmoteSparklySFX" })
+		thread(PlayVoiceLines, GlobalVoiceLines.EchoKeepsakeLines, true)
+		CreateAnimation({
+			Name = "BiomeStateGoldFx",
+			DestinationId = spawnPoint,
+			OffsetX = 0,
+			OffsetY = 0,
+			Group =
+			"Combat_Menu_Additive"
+		})
+		thread(InCombatTextArgs,
+			{
+				TargetId = spawnPoint,
+				Text = "DoubleBoonSuccess",
+				ScreenSpace = true,
+				SkipRise = true,
+				PreDelay = 0.05,
+				Duration = 1.0,
+				OffsetX = 0,
+				OffsetY = 0,
+				Group =
+				"Combat_Menu_Additive",
+				Justification = "Center",
+				FontSize = 30
+			})
 	end
 end

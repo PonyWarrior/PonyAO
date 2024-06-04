@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed AxeSpecialUnlimitedBlock after patch
+- Fixed for ModUtil 4.0
+
+### Added
+
+- Added EchoKeepsakeChange
+- Added EphyraOverhaul
+
 ## [0.3.0] - 2024-06-02
 
 ### Added

@@ -121,7 +121,13 @@ local config = {
 		EnableBoneTroves = {
 			Enabled = true
 		},
-	}
+	},
+	EchoKeepsakeChange = {
+		Enabled = true
+	},
+	EphyraOverhaul = {
+		Enabled = true
+	},
 }
 
 local description = {
@@ -162,8 +168,7 @@ local description = {
 		},
 	},
 	TranquilGainRework = {
-		Enabled =
-		"Enable to rework Demeter's Tranquil Gain. When your Magick falls under a percentage, your magick is fully restored after a delay. This delay increases every time this occurs, resetting each location.",
+		Enabled = "Enable to rework Demeter's Tranquil Gain. When your Magick falls under a percentage, your magick is fully restored after a delay. This delay increases every time this occurs, resetting each location.",
 		InitialDelay = "Initial delay before regenerating magick.",
 		BaseDelayIncrease = "Base delay increase per time regeneration has occured in a location.",
 		ManaThreshold = "Mana threshold, will not regenerate above it.",
@@ -249,7 +254,13 @@ local description = {
 		EnableBoneTroves = {
 			Enabled = "Enable to make troves containing bones appear."
 		},
-	}
+	},
+	EchoKeepsakeChange = {
+		Enabled = "Enable to make Echo's keepsake duplicate your current reward on activation, with the number of occurences increasing per rank instead of the chance."
+	},
+	EphyraOverhaul = {
+		Enabled = "Enable to overhaul Ephyra. 6 Rooms containing pylons are designated, and shown with PonyQOL2 installed. Completing rooms with no pylon does not increase the pylon counter, letting you complete more than 6. Every door in Ephyra is open and contains a reward. Completing the 6 pylon rooms unseals the boss room and locks all doors as normal. If you complete more than 6 rooms, each room you enter beyond the 6th will contain reinforcements from Tartarus."
+	},
 }
 
 return config, description

@@ -126,9 +126,193 @@ if config.TorchImprovements.Enabled then
 end
 
 if config.AxeSpecialUnlimitedBlock.Enabled then
-	OverwriteTableKeys(WeaponData.WeaponAxeBlock2.ChargeWeaponStages[1], {
-		ForceRelease = false,
-	})
+	local weaponFile = rom.path.combine(rom.paths.Content, 'Game/Weapons/PlayerWeapons.sjson')
+
+	sjson.hook(weaponFile, function(sjsonData)
+		for _, v in ipairs(sjsonData.Weapons) do
+			if v.Name == "WeaponAxeBlock2" then
+				for key, value in pairs(v) do
+					if key ~= "Effects" then
+						v[key] = nil
+					end
+				end
+				v.Name = "WeaponAxeBlock2"
+				v.InheritFrom = "1_BaseDamagingWeapon"
+				v.Control = "Attack3"
+				v.Type = "GUN"
+				v.Projectile = "ProjectileAxeBlockSpin"
+				v.ClipSize = 1
+				v.ChargeSoundFadeTime = 0.25
+				v.FullyAutomatic = true
+				v.ChargeCancelMovement = true
+				v.CancelMovement = true
+				v.RootOwnerWhileFiring = true
+				v.BlockMoveInput = true
+				v.AutoLock = false
+				v.ChargeStartFx = "null"
+				v.ProjectileOffsetStart = "LEFT"
+				v.FireGraphic = "Melinoe_Axe_Special1_FireLoop"
+				v.FireOnRelease = false
+				v.TurboReleaseTimeRequireRelease = 0.2
+				v.OnlyChargeOnce = true
+				v.OnWeaponChargingSound = "/VO/MelinoeEmotes/EmoteCastingAlt"
+				v.OnWeaponChargingSoundChance = 1
+				v.ChargeTimeFrames = 6
+				v.Cooldown = 0.24
+				v.ChargeStartAnimation = "Melinoe_Axe_Special1_Start"
+				v.LockTriggerForCharge = true
+				v.TriggerReleaseGraphic = "Melinoe_Axe_Special1_End"
+				v.ChargeCancelGraphic = "null"
+				v.BarrelLength = 140
+				v.AllowExternalForceRelease = true
+				v.FailedToFireCooldownAnimation = "null"
+				v.FailedToFireCooldownDuration = 0.15
+				v.BlockedByAllOtherFireRequest = true
+			elseif v.Name == "WeaponAxeSpecialSwing" then
+				for key, value in pairs(v) do
+					if key ~= "Effects" then
+						v[key] = nil
+					end
+				end
+				v.Name = "WeaponAxeSpecialSwing"
+				v.InheritFrom = "1_BaseDamagingWeapon"
+				v.Control = "Attack3"
+				v.Type = "GUN"
+				v.Projectile = "ProjectileAxeBlock2"
+				v.ClipSize = 1
+				v.ChargeSoundFadeTime = 0.25
+				v.FullyAutomatic = true
+				v.ChargeCancelMovement = true
+				v.CancelMovement = true
+				v.RootOwnerWhileFiring = true
+				v.BlockMoveInput = true
+				v.AutoLock = false
+				v.ChargeStartFx = "null"
+				v.ProjectileOffsetStart = "LEFT"
+				v.FireGraphic = "Melinoe_Axe_SpecialEx1_Fire"
+				v.FireOnRelease = false
+				v.DefaultControl = false
+				v.OnlyChargeOnce = true
+				v.ChargeTime = 0.05
+				v.ChargeStartAnimation = "Melinoe_Axe_SpecialEx1_Start"
+				v.ChargeCancelGraphic = "null"
+				v.LockTriggerForCharge = true
+				v.TriggerReleaseGraphic = "null"
+				v.AllowExternalForceRelease = true
+				v.FailedToFireCooldownAnimation = "null"
+				v.FailedToFireCooldownDuration = 0.15
+				v.LoseControlIfNotCharging = true
+				v.ControlWindow = 0.25
+				v.PriorityFireRequest = true
+				v.SetCompleteAngleOnFire = true
+				v.FireAtAttackTarget = true
+				v.LockTriggerTransferFromOnSwap = false
+				v.RemoveControlOnCharge = "WeaponCast"
+				v.RemoveControlOnCharge2 = "WeaponAxeBlock2"
+				v.AddControlOnFire = "WeaponCast"
+				v.AddControlOnFire2 = "WeaponAxeBlock2"
+				v.AddControlOnChargeCancel = "WeaponCast"
+				v.AddControlOnChargeCancel2 = "WeaponAxeBlock2"
+				v.BarrelLength = 820
+				v.NumProjectiles = 3
+				v.ProjectileIntervalStart = 0.01
+				v.ProjectileInterval = 0.2
+				v.ProjectileSpacing = 460
+				v.ProjectileAngleOffset = 0
+				v.ProjectileAngleStartOffset = 90
+			end
+		end
+	end)
+
+	WeaponData.WeaponAxeBlock2 = {
+		Name = "WeaponAxeBlock2",
+		StartingWeapon = false,
+		ShowManaIndicator = true,
+		ExpireProjectilesOnFire = { "ProjectileAxeSpin" },
+		DoProjectileBlockPresentation = true,
+		OnChargeFunctionNames = { "DoWeaponCharge", "CheckAxeBlockThread" },
+		ChargeWeaponData =
+		{
+			EmptyChargeFunctionName = "EmptyAxeBlockCharge",
+			OnStageReachedFunctionName = "AxeBlockChargeStage",
+		},
+		ChargeWeaponStages =
+		{
+			{
+				ManaCost = 30,
+				Wait = 0.77,
+				SkipManaSpendOnFire = true,
+				DeferSwap = "WeaponAxeSpecialSwing",
+				ChannelSlowEventOnStart = true,
+				CompleteObjective = "WeaponAxeSpecialSwing",
+			},
+		},
+
+		DefaultKnockbackForce = 480,
+		DefaultKnockbackScale = 0.6,
+		HideChargeDuration = 0.45,
+		SkipAttackNotReadySounds = true,
+		NoControlSound = "/Leftovers/SFX/OutOfAmmo2",
+
+		Sounds =
+		{
+			FireSounds =
+			{
+				{ Name = "/SFX/Player Sounds/ZagreusFistWhoosh" },
+			},
+			ImpactSounds =
+			{
+				Invulnerable = "/SFX/Player Sounds/ZagreusShieldRicochet",
+				Armored = "/SFX/Player Sounds/ZagreusShieldRicochet",
+				Bone = "/SFX/Player Sounds/ShieldObstacleHit",
+				Brick = "/SFX/Player Sounds/ShieldObstacleHit",
+				Stone = "/SFX/Player Sounds/ShieldObstacleHit",
+				Organic = "/SFX/Player Sounds/ShieldObstacleHit",
+				StoneObstacle = "/SFX/SwordWallHitClankSmall",
+				BrickObstacle = "/SFX/SwordWallHitClankSmall",
+				MetalObstacle = "/SFX/SwordWallHitClankSmall",
+				BushObstacle = "/Leftovers/World Sounds/LeavesRustle",
+				Shell = "/SFX/ShellImpact",
+			},
+		},
+
+		Upgrades = {},
+	}
+
+	WeaponData.WeaponAxeSpecialSwing = {
+		Name = "WeaponAxeSpecialSwing",
+		StartingWeapon = false,
+		IsExWeapon = true,
+		OnChargeFunctionName = "SpendQueuedMana",
+
+		DefaultKnockbackForce = 960,
+		DefaultKnockbackScale = 1.2,
+
+		Sounds =
+		{
+			FireSounds =
+			{
+				{ Name = "/VO/MelinoeEmotes/EmotePoweringUp" },
+				{ Name = "/SFX/Player Sounds/ZagreusFistWhoosh" },
+			},
+			ImpactSounds =
+			{
+				Invulnerable = "/SFX/SwordWallHitClank",
+				Armored = "/SFX/Player Sounds/ZagreusShieldRicochet",
+				Bone = "/SFX/MetalBoneSmashSHIELD",
+				Brick = "/SFX/MetalStoneClangSHIELD",
+				Stone = "/SFX/MetalStoneClangSHIELD",
+				Organic = "/SFX/MetalOrganicHitSHIELD",
+				StoneObstacle = "/SFX/Player Sounds/ShieldObstacleHit",
+				BrickObstacle = "/SFX/Player Sounds/ShieldObstacleHit",
+				MetalObstacle = "/SFX/Player Sounds/ShieldObstacleHit",
+				BushObstacle = "/Leftovers/World Sounds/LeavesRustle",
+			},
+		},
+		OnFiredFunctionName = "RevertWeaponChanges",
+		Upgrades = {},
+	}
+
 end
 
 if config.StaffImprovements.Enabled then
@@ -607,6 +791,292 @@ if config.TroveChanges.Enabled then
 					Path = { "GameState", "EncountersCompletedCache" },
 					HasAny = { "TimeChallengeF", "TimeChallengeG", "TimeChallengeI", "TimeChallengeO" }
 				}
+			end
+		end
+	end
+end
+
+if config.EchoKeepsakeChange.Enabled then
+
+	local textfile = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
+
+	sjson.hook(textfile, function(sjsonData)
+		for _, v in ipairs(sjsonData.Texts) do
+			if v.Id == "UnpickedBoonKeepsake" then
+				v.Description = "After choosing a {$Keywords.GodBoon}, {#AltUpgradeFormat}{$TooltipData.ExtractData.Chance}% {#Prev}of the time create a copy, {#BoldFormatGraft}{$TooltipData.ExtractData.Uses} {#Prev} time(s) this night."
+			end
+		end
+	end)
+
+	OverwriteTableKeys(TraitData.UnpickedBoonKeepsake, {
+		DoubleBoonChance = 0.25,
+		Uses = { BaseValue = 1 },
+		ExtractValues =
+		{
+			{
+				Key = "DoubleBoonChance",
+				ExtractAs = "Chance",
+				Format = "Percent",
+			},
+			{
+				Key = "Uses",
+				ExtractAs = "Uses",
+			},
+		},
+	})
+
+	ModUtil.Path.Wrap("HandleUpgradeChoiceSelection", function(base, screen, button, args)
+		if HasHeroTraitValue("DoubleBoonChance") then
+			HandleUpgradeChoiceSelection_wrap(screen, button, args)
+		else
+			base(screen, button, args)
+		end
+	end)
+end
+
+if config.EphyraOverhaul.Enabled then
+	ModUtil.Path.Override("ChooseAvailableN_HubDoors", function(room, args)
+		if room.DoorsChosen then
+			return
+		end
+		local roomData = RoomData[room.Name] or room
+		local doorIds = GetAllKeys(roomData.PredeterminedDoorRooms)
+
+		CurrentRun.PylonRooms = {}
+		local pylonCount = 0
+
+		for doorId, roomName in pairs(roomData.PredeterminedDoorRooms) do
+			if not IsGameStateEligible(CurrentRun, RoomData[roomName], RoomData[roomName].GameStateRequirements) then
+				doorIds[doorId] = nil
+				room.UnavailableDoors[doorId] = true
+			elseif pylonCount < 6 then
+				CurrentRun.PylonRooms[roomName] = true
+				pylonCount = pylonCount + 1
+			end
+		end
+
+		-- Remove all doors which dont have a room assigned yet
+		local allDoors = GetIdsByType({ Names = args.Types })
+		for k, doorId in pairs(allDoors) do
+			if not Contains(doorIds, doorId) then
+				room.UnavailableDoors[doorId] = true
+			end
+		end
+
+		room.DoorsChosen = true
+	end)
+
+	-- ObstacleData.EphyraExitDoor.LockWhenEphyraBossExitReady = false
+
+	RewardStoreData.HubRewards = {
+		{
+			Name = "MaxHealthDrop",
+		},
+		{
+			Name = "MaxManaDrop",
+		},
+		{
+			Name = "Boon",
+		},
+		{
+			Name = "Boon",
+		},
+		{
+			Name = "Boon",
+		},
+		{
+			Name = "Boon",
+		},
+		{
+			Name = "Boon",
+		},
+		-- extra boons
+		{
+			Name = "Boon",
+		},
+		{
+			Name = "Boon",
+		},
+		{
+			Name = "Devotion",
+			GameStateRequirements =
+			{
+				{
+					PathTrue = { "GameState", "TextLinesRecord", "PoseidonDevotionIntro01" },
+				},
+			}
+		},
+		{
+			Name = "RoomMoneyDrop",
+		},
+		{
+			Name = "ElementalBoost",
+			AllowDuplicates = true
+		},
+		{
+			Name = "GiftDrop",
+		},
+		{
+			Name = "MetaCurrencyDrop",
+		},
+		{
+			Name = "MetaCardPointsCommonDrop",
+		},
+		{
+			Name = "MemPointsCommonDrop",
+		},
+		{
+			Name = "WeaponUpgrade",
+			GameStateRequirements =
+			{
+				NamedRequirements = { "HammerLootRequirements" },
+			}
+		},
+		{
+			Name = "HermesUpgrade",
+			GameStateRequirements =
+			{
+				-- rule 0: only unlock at this point
+				{
+					PathTrue = { "GameState", "RoomCountCache", "G_Boss01" },
+				},
+				{
+					Path = { "GameState", "TextLinesRecord" },
+					HasAll = { "HermesFirstPickUp", "PoseidonLegacyBoonIntro01" },
+				},
+				-- rule 1: have x or fewer of this specific upgrade in a Biome
+				{
+					Path = { "CurrentRun", "LootBiomeRecord" },
+					SumOf = { "HermesUpgrade" },
+					Comparison = "<=",
+					Value = 0,
+				},
+				-- rule 2: have y or fewer of the non-Boon power set
+				{
+					Path = { "CurrentRun", "LootBiomeRecord" },
+					SumOf = { "WeaponUpgrade", "HermesUpgrade" },
+					Comparison = "<=",
+					Value = 1,
+				},
+				-- rule 3: only drop up to z per run
+				{
+					Path = { "CurrentRun", "LootTypeHistory", "HermesUpgrade" },
+					Comparison = "<=",
+					Value = 2,
+				},
+
+			}
+		},
+		{
+			Name = "SpellDrop",
+			GameStateRequirements =
+			{
+				RequiredNotInStore = "SpellDrop",
+				RequiredFalseRewardType = "SpellDrop",
+				{
+					PathFalse = { "CurrentRun", "UseRecord", "SpellDrop" },
+				},
+				{
+					Path = { "GameState", "TextLinesRecord" },
+					HasAll = { "ArtemisFirstMeeting", "SeleneFirstPickUp" },
+				},
+			},
+		},
+	}
+
+	ConsumableData.ElementalBoost.DoorIcon = "ElementalEssenceDrop"
+
+	ModUtil.Path.Override("SpawnSoulPylon", function(room, args)
+		if GetConfigOptionValue({ Name = "EditingMode" }) then
+			return
+		end
+
+		--MOD START
+		thread(EphyraScalingDifficulty)
+		if not CurrentRun.PylonRooms[room.Name] then
+			return
+		end
+		--MOD END
+
+		args = args or {}
+		local spawnName = args.SpawnName or "SoulPylon"
+
+		local pylonId = SpawnUnit({ Name = spawnName, Group = "Standing", DestinationId = GetRandomValue(GetIds({ Name = "SoulPylonSpawnPoints"}) or GetIds({Name = "SpawnPoints"})) })
+		local pylon = DeepCopyTable( EnemyData[spawnName] )
+		pylon.ObjectId = pylonId
+		thread(SetupUnit, pylon, CurrentRun)
+	end)
+
+	function EphyraScalingDifficulty()
+		if CurrentRun.CurrentRoom.ReinforcementsSpawned then
+			return
+		else
+			CurrentRun.CurrentRoom.ReinforcementsSpawned = true
+		end
+		if not CurrentRun.EphyraRoomCount then
+			CurrentRun.EphyraRoomCount = 1
+		else
+			CurrentRun.EphyraRoomCount = CurrentRun.EphyraRoomCount + 1
+		end
+
+		if CurrentRun.EphyraRoomCount > 1 then
+			local count = CurrentRun.EphyraRoomCount - 1
+			wait(3)
+			SpawnEphyraReinforcements(count)
+		end
+	end
+
+	local enemyWave1 = {
+		"TimeElemental_Elite",
+		"TimeElemental_Elite",
+		"TimeElemental_Elite",
+	}
+
+	local enemyWave2 = {
+		"TimeElemental_Elite",
+		"TimeElemental_Elite",
+		"TimeElemental_Elite",
+		"GoldElemental_Elite",
+		"GoldElemental_Elite",
+		"GoldElemental_Elite",
+	}
+
+	local enemyWave3 = {
+		"TimeElemental_Elite",
+		"TimeElemental_Elite",
+		"TimeElemental_Elite",
+		"GoldElemental_Elite",
+		"GoldElemental_Elite",
+		"GoldElemental_Elite",
+		"SatyrLancer_Elite",
+		"SatyrRatCatcher_Elite",
+	}
+
+	function SpawnEphyraReinforcements(count)
+		local args = {
+			Name = "",
+			Active = true,
+		}
+		if count < 2 then
+			for _, value in ipairs(enemyWave1) do
+				args.Name = value
+				DebugSpawnEnemy(nil, args)
+			end
+		elseif count < 4 then
+			for _, value in ipairs(enemyWave2) do
+				args.Name = value
+				DebugSpawnEnemy(nil, args)
+			end
+		elseif count < 6 then
+			for _, value in ipairs(enemyWave3) do
+				args.Name = value
+				DebugSpawnEnemy(nil, args)
+			end
+		else
+			for _, value in ipairs(enemyWave3) do
+				args.Name = value
+				DebugSpawnEnemy(nil, args)
+				DebugSpawnEnemy(nil, args)
 			end
 		end
 	end
