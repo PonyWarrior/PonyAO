@@ -88,8 +88,6 @@ if config.HexChanges.Enabled then
 			SetPlayerVulnerable("StartSpellCharge")
 		end)
 	end
-
-	
 end
 
 if config.TorchImprovements.Enabled then
@@ -339,7 +337,41 @@ if config.StaffImprovements.Enabled then
 	ModUtil.Path.Override("EmptyStaffCharge", function(weaponName, stageReached)
 		if stageReached > 0 then
 			local angle = GetAngle({ Id = CurrentRun.Hero.ObjectId })
-			CreateProjectileFromUnit({ WeaponName = weaponName, Name = "ProjectileStaffBallCharged", Id = CurrentRun.Hero.ObjectId, DestinationId = CurrentRun.Hero.ObjectId, Angle = angle })
+			local playerLocation = GetLocation({ Id = CurrentRun.Hero.ObjectId })
+			local startX = playerLocation.X
+			local startY = playerLocation.Y
+			local derivedValues = GetDerivedPropertyChangeValues({
+				ProjectileName = "ProjectileStaffBallCharged",
+				WeaponName = weaponName,
+				Type = "Projectile",
+			})
+			local dropLocation = SpawnObstacle({ Name = "InvisibleTarget", LocationX = startX, LocationY = startY })
+			CreateProjectileFromUnit({ WeaponName = weaponName, Name = "ProjectileStaffBallCharged", Id = CurrentRun.Hero.ObjectId, DestinationId = dropLocation, FireFromTarget = true, DataProperties = derivedValues.PropertyChanges, ThingProperties = derivedValues.ThingPropertyChanges, Angle = angle })
+			if HeroHasTrait("StaffSelfHitAspect") then
+				local triggerArgs = { ProjectileVolley = 1 }
+				local traitData = GetHeroTrait("StaffSelfHitAspect")
+				local functionArgs = traitData.OnWeaponFiredFunctions.FunctionArgs
+				local threadName = "RepeatSpecialThread"
+
+				if HasThread(threadName) then
+					killTaggedThreads(threadName)
+					waitUnmodified(0.1)
+					local id = SessionMapState.OriginMarkers.WeaponCast
+					SessionMapState.OriginMarkers.WeaponCast = nil
+					SetAnimation({ Name = functionArgs.ExpiringAnimationName, DestinationId = id })
+					thread(DestroyOnDelay, { id }, functionArgs.DestroyDelay)
+					id = SessionMapState.OriginMarkers.WeaponStaffBall
+					SessionMapState.OriginMarkers.WeaponStaffBall = nil
+					SetAnimation({ Name = functionArgs.ExpiringAnimationName, DestinationId = id })
+					thread(DestroyOnDelay, { id }, functionArgs.DestroyDelay)
+				end
+				thread(StartSpecialRepeatThread, startX, startY, GetAngle({ Id = CurrentRun.Hero.ObjectId }), functionArgs, triggerArgs)
+
+				local zOffset = 90
+				local originMarkerId = SpawnObstacle({ Name = "BlankObstacle", Group = "FX_Standing", LocationX = startX, LocationY = startY, OffsetZ = zOffset })
+				SetAnimation({ Name = functionArgs.AnimationName, DestinationId = originMarkerId })
+				SessionMapState.OriginMarkers[weaponName] = originMarkerId
+			end
 		end
 	end)
 
@@ -992,7 +1024,7 @@ if config.EphyraOverhaul.Enabled then
 		end
 
 		--MOD START
-		thread(EphyraScalingDifficulty)
+		EphyraScalingDifficulty()
 		if not CurrentRun.PylonRooms[room.Name] then
 			return
 		end
@@ -1019,10 +1051,9 @@ if config.EphyraOverhaul.Enabled then
 			CurrentRun.EphyraRoomCount = CurrentRun.EphyraRoomCount + 1
 		end
 
-		if CurrentRun.EphyraRoomCount > 1 then
-			local count = CurrentRun.EphyraRoomCount - 1
-			wait(3)
-			SpawnEphyraReinforcements(count)
+		if CurrentRun.EphyraRoomCount > 6 then
+			local count = CurrentRun.EphyraRoomCount - 6
+			thread(SpawnEphyraReinforcements, count)
 		end
 	end
 
@@ -1057,6 +1088,7 @@ if config.EphyraOverhaul.Enabled then
 			Name = "",
 			Active = true,
 		}
+		wait(3)
 		if count < 2 then
 			for _, value in ipairs(enemyWave1) do
 				args.Name = value

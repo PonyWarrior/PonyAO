@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed StaffImprovements not shooting modified special
+- Fixed StaffImprovements with Momus
+- Fixed EphyraOverhaul reinforcements appearing before 6 rooms have been cleared
+
 ## [0.4.0] - 2024-06-04
 
 ### Fixed
