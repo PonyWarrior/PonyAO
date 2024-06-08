@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed a crash with StaffImprovements, Momus aspect and Giga Moonburst sometimes causing a crash
+
 ## [0.4.1] - 2024-06-05
 
 ### Fixed

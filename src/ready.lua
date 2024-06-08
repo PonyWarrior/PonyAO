@@ -349,6 +349,9 @@ if config.StaffImprovements.Enabled then
 			CreateProjectileFromUnit({ WeaponName = weaponName, Name = "ProjectileStaffBallCharged", Id = CurrentRun.Hero.ObjectId, DestinationId = dropLocation, FireFromTarget = true, DataProperties = derivedValues.PropertyChanges, ThingProperties = derivedValues.ThingPropertyChanges, Angle = angle })
 			if HeroHasTrait("StaffSelfHitAspect") then
 				local triggerArgs = { ProjectileVolley = 1 }
+				if SessionMapState.ProjectileChargeStageReached[triggerArgs.ProjectileVolley] == nil then
+					SessionMapState.ProjectileChargeStageReached[triggerArgs.ProjectileVolley] = 1
+				end
 				local traitData = GetHeroTrait("StaffSelfHitAspect")
 				local functionArgs = traitData.OnWeaponFiredFunctions.FunctionArgs
 				local threadName = "RepeatSpecialThread"
