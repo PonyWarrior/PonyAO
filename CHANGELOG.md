@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 2024-06-08
+
 ### Fixed
 
 - Fixed a crash with StaffImprovements, Momus aspect and Giga Moonburst sometimes causing a crash
@@ -68,7 +70,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version of the mod!
 
-[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.4.1...HEAD
+[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.4.2...HEAD
+[0.4.2]: https://github.com/PonyWarrior/PonyAO/compare/0.4.1...0.4.2
 [0.4.1]: https://github.com/PonyWarrior/PonyAO/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/PonyWarrior/PonyAO/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/PonyWarrior/PonyAO/compare/0.2.2...0.3.0
