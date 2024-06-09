@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2024-06-09
+
 ### Added
 
 - Added a band for heroic rarity keepsakes
@@ -79,7 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version of the mod!
 
-[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.4.2...HEAD
+[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/PonyWarrior/PonyAO/compare/0.4.2...0.5.0
 [0.4.2]: https://github.com/PonyWarrior/PonyAO/compare/0.4.1...0.4.2
 [0.4.1]: https://github.com/PonyWarrior/PonyAO/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/PonyWarrior/PonyAO/compare/0.3.0...0.4.0
