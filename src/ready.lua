@@ -7,7 +7,11 @@
 -- 	so you will most likely want to have it reference
 --	values and functions later defined in `reload.lua`.
 
-mod = modutil.mod.Mod.Register(_PLUGIN.guid)
+local package = rom.path.combine(_PLUGIN.plugins_data_mod_folder_path, _PLUGIN.guid)
+modutil.mod.Path.Wrap("SetupMap", function(base)
+	LoadPackages({ Name = package })
+	base()
+end)
 
 if config.TranquilGainRework.Enabled then
 	local textfile = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
@@ -674,7 +678,7 @@ if config.CardChanges.Enabled then
 		})
 
 		ModUtil.Path.Wrap("EquipKeepsake", function(base, heroUnit, traitName, args)
-			if HeroHasTrait("MetaToRunMetaUpgrade") then
+			if IsArtificerEquipped() then
 				EquipKeepsake_wrap(heroUnit, traitName, args)
 			else
 				base(heroUnit, traitName, args)
@@ -1115,4 +1119,10 @@ if config.EphyraOverhaul.Enabled then
 			end
 		end
 	end
+end
+
+if config.ExtraLastStandsFirst.Enabled then
+	ModUtil.Path.Override("CheckLastStand", function(victim, triggerArgs)
+		CheckLastStand_override(victim, triggerArgs)
+	end)
 end

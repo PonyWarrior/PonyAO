@@ -88,7 +88,7 @@ if config.CardChanges.Enabled then
 			local unit = heroUnit or CurrentRun.Hero
 			traitName = traitName or GameState.LastAwardTrait
 			if traitName == nil or HeroHasTrait(traitName) then
-				return
+				UnequipKeepsake(CurrentRun.Hero, traitName)
 			end
 
 			local rarity = GetRarityKey(GetKeepsakeLevel(traitName))
@@ -113,6 +113,18 @@ if config.CardChanges.Enabled then
 				RecreateLifePips()
 			end
 		end
+	end
+
+	function IsArtificerEquipped()
+		if GetNumShrineUpgrades("NoMetaUpgradesShrineUpgrade") >= 1 then
+			return false
+		end
+		for metaUpgradeName, metaUpgradeData in pairs(GameState.MetaUpgradeState) do
+			if metaUpgradeName == "MetaToRunUpgrade" and MetaUpgradeCardData[metaUpgradeName] and metaUpgradeData.Equipped and MetaUpgradeCardData[metaUpgradeName].TraitName then
+				return true
+			end
+		end
+		return false
 	end
 end
 
@@ -707,5 +719,116 @@ if config.EchoKeepsakeChange.Enabled then
 				Justification = "Center",
 				FontSize = 30
 			})
+	end
+end
+
+if config.ExtraLastStandsFirst.Enabled then
+	function CheckLastStand_override(victim, triggerArgs)
+		if not HasLastStand(victim) then
+			return false
+		end
+
+		if ActiveScreens.TraitTrayScreen ~= nil then
+			thread(TraitTrayScreenClose, ActiveScreens.TraitTrayScreen)
+		end
+		CancelFishing()
+		ToggleCombatControl(CombatControlsDefaults, false, "LastStand")
+
+
+		local lastStandData = nil
+		if HasHeroTraitValue("BlockDeathTimer") and not MapState.UsedBlockDeath then
+			MapState.UsedBlockDeath = true
+			lastStandData =
+			{
+				HealAmount = GetTotalHeroTraitValue("BlockDeathHealth"),
+				FunctionName = "SetupBlockDeathThread"
+			}
+		else
+			--MOD START
+			lastStandData = PickLastStand(victim.LastStands)
+			--MOD END
+		end
+		local weaponName = lastStandData.WeaponName
+		local lastStandManaFraction = lastStandData.ManaFraction or 0
+		local lastStandHealth = lastStandData.HealAmount or 0
+		local lastStandFraction = lastStandData.HealFraction or 0
+		lastStandFraction = lastStandFraction + GetTotalHeroTraitValue("LastStandHealFraction")
+
+		if lastStandData.RandomHeal then
+			for i, data in ipairs(lastStandData.RandomHeal) do
+				if data.Chance and RandomChance(data.Chance) then
+					lastStandHealth = data.HealAmount
+					break
+				else
+					if type(data.HealFraction) == "table" then
+						lastStandFraction = RandomFloat(data.HealFraction.Min, data.HealFraction.Max)
+					else
+						lastStandFraction = data.HealFraction
+					end
+				end
+			end
+		end
+
+		if lastStandData.ExpiresKeepsake then
+			CurrentRun.ExpiredKeepsakes[lastStandData.ExpiresKeepsake] = true
+			LogTraitUses(lastStandData.ExpiresKeepsake)
+		end
+
+		CurrentRun.Hero.LastStandsUsed = (CurrentRun.Hero.LastStandsUsed or 0) + 1
+
+		SetPlayerInvulnerable("LastStand")
+		ClearEffect({ Id = CurrentRun.Hero.ObjectId, Name = "HecatePolymorphStun" })
+		ClearEffect({ Id = CurrentRun.Hero.ObjectId, Name = "MiasmaSlow" })
+		if HasHeroTraitValue("RechargeSpellOnLastStand") then
+			ChargeSpell(-1000)
+		end
+		triggerArgs.HasLastStand = HasLastStand(victim)
+		ExpireProjectiles({ ExcludeNames = ConcatTableValues(ShallowCopyTable(WeaponSets.ExpireProjectileExcludeProjectileNames), ShallowCopyTable(WeaponSets.ExpireProjectileLastStandExcludeProjectileNames)) })
+
+		if MapState.FamiliarUnit ~= nil then
+			RunEventsGeneric(MapState.FamiliarUnit.LastStandEvents, MapState.FamiliarUnit)
+		end
+
+		PlayerLastStandPresentationStart(triggerArgs)
+
+		PlayerLastStandHeal(victim, triggerArgs, lastStandHealth, lastStandFraction)
+		thread(UpdateHealthUI, triggerArgs)
+
+		local manaRestoreAmount = round(victim.MaxMana * lastStandManaFraction)
+		ManaDelta(manaRestoreAmount)
+		thread(PlayerLastStandManaGainText, { Amount = manaRestoreAmount, Delay = 0.5 })
+
+		PlayerLastStandPresentationEnd()
+
+		ToggleCombatControl(CombatControlsDefaults, true, "LastStand")
+		if weaponName ~= nil then
+			FireWeaponFromUnit({ Weapon = weaponName, Id = victim.ObjectId, DestinationId = victim.ObjectId, AutoEquip = true })
+		end
+		CallFunctionName(lastStandData.FunctionName, victim, lastStandData.FunctionArgs)
+
+		for i, functionData in pairs(GetHeroTraitValues("OnLastStandFunction")) do
+			CallFunctionName(functionData.Name, functionData.FunctionArgs, triggerArgs)
+		end
+
+		wait(1.5, RoomThreadName)
+
+
+		SetPlayerVulnerable("LastStand")
+		return true
+	end
+
+	function PickLastStand(lastStands)
+		local lastStand = nil
+		-- stubborn defiance, currently not in the game but you never know
+		if not IsMetaUpgradeActive("ExtraChanceReplenishMetaUpgrade") then
+			for i, lastStandData in pairs(lastStands) do
+				if lastStandData.Icon ~= "ExtraLifeStyx" then
+					lastStand = table.remove(lastStands, i)
+					return lastStand
+				end
+			end
+		end
+		lastStand = table.remove(lastStands)
+		return lastStand
 	end
 end

@@ -48,13 +48,37 @@ local function on_reload()
 	-- what to do when we are ready, but also again on every reload.
 	-- only do things that are safe to run over and over.
 	if config.enabled == false then return end
+	mod = modutil.mod.Mod.Register(_PLUGIN.guid)
 	import 'reload.lua'
 end
 
 -- this allows us to limit certain functions to not be reloaded.
-local loader = reload.auto_single()
+local loader = reload.auto_multiple()
 
 -- this runs only when modutil and the game's lua is ready
 modutil.once_loaded.game(function()
-	loader.load(on_ready, on_reload)
+	loader.load('PonyAO A', on_ready, on_reload)
 end)
+
+local function on_TraitData_Keepsake()
+	if config.enabled == false then return end
+	local GUIAnimationsFile = rom.path.combine(rom.paths.Content, 'Game/Animations/GUIAnimations.sjson')
+
+	local gui_order = {
+		"Name", "InheritFrom", "FilePath"
+	}
+
+	local newFrame = sjson.to_object({
+		Name = "Frame_Keepsake_Rank4",
+		InheritFrom = "Menu_Frame",
+		FilePath = "GUI\\Screens\\AwardMenu\\keepsake_frame_4",
+	}, gui_order)
+
+	sjson.hook(GUIAnimationsFile, function(data)
+		table.insert(data.Animations, newFrame)
+	end)
+
+	TraitData.GiftTrait.FrameRarities.Heroic = "Frame_Keepsake_Rank4"
+end
+
+loader.queue.post_import_file('PonyAO B', 'TraitData_Keepsake.lua', on_TraitData_Keepsake)
