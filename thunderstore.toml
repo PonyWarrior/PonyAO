@@ -5,7 +5,7 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "PonyWarrior"
 name = "PonyAO"
-versionNumber = "0.5.0"
+versionNumber = "0.5.1"
 description = "Overhauls different aspects of the game, fully configurable."
 websiteUrl = "https://github.com/PonyWarrior/PonyAO"
 containsNsfwContent = false
