@@ -905,6 +905,10 @@ if config.EphyraOverhaul.Enabled then
 		room.DoorsChosen = true
 	end)
 
+	RoomData.BaseN.ForcedRewardStore = "HubRewards"
+	RoomData.N_CombatData.ForcedRewardStore = "HubRewards"
+	RoomData.N_MiniBoss01.ForcedRewardStore = "HubRewards"
+
 	-- ObstacleData.EphyraExitDoor.LockWhenEphyraBossExitReady = false
 
 	RewardStoreData.HubRewards = {
@@ -916,25 +920,32 @@ if config.EphyraOverhaul.Enabled then
 		},
 		{
 			Name = "Boon",
+			AllowDuplicates = true
 		},
 		{
 			Name = "Boon",
+			AllowDuplicates = true
 		},
 		{
 			Name = "Boon",
+			AllowDuplicates = true
 		},
 		{
 			Name = "Boon",
+			AllowDuplicates = true
 		},
 		{
 			Name = "Boon",
+			AllowDuplicates = true
 		},
 		-- extra boons
 		{
 			Name = "Boon",
+			AllowDuplicates = true
 		},
 		{
 			Name = "Boon",
+			AllowDuplicates = true
 		},
 		{
 			Name = "Devotion",
@@ -1065,25 +1076,33 @@ if config.EphyraOverhaul.Enabled then
 	end
 
 	local enemyWave1 = {
-		"TimeElemental_Elite",
+		"TimeElemental",
 		"TimeElemental_Elite",
 		"TimeElemental_Elite",
 	}
 
 	local enemyWave2 = {
+		"TimeElemental",
 		"TimeElemental_Elite",
 		"TimeElemental_Elite",
-		"TimeElemental_Elite",
-		"GoldElemental_Elite",
+		"GoldElemental",
 		"GoldElemental_Elite",
 		"GoldElemental_Elite",
 	}
 
 	local enemyWave3 = {
+		"TimeElemental",
 		"TimeElemental_Elite",
 		"TimeElemental_Elite",
-		"TimeElemental_Elite",
+		"GoldElemental",
 		"GoldElemental_Elite",
+		"GoldElemental_Elite",
+		"SatyrRatCatcher_Elite",
+	}
+
+	local enemyWave4 = {
+		"TimeElemental_Elite",
+		"TimeElemental_Elite",
 		"GoldElemental_Elite",
 		"GoldElemental_Elite",
 		"SatyrLancer_Elite",
@@ -1096,23 +1115,23 @@ if config.EphyraOverhaul.Enabled then
 			Active = true,
 		}
 		wait(3)
-		if count < 2 then
+		if count <= 2 then
 			for _, value in ipairs(enemyWave1) do
 				args.Name = value
 				DebugSpawnEnemy(nil, args)
 			end
-		elseif count < 4 then
+		elseif count <= 4 then
 			for _, value in ipairs(enemyWave2) do
 				args.Name = value
 				DebugSpawnEnemy(nil, args)
 			end
-		elseif count < 6 then
+		elseif count <= 6 then
 			for _, value in ipairs(enemyWave3) do
 				args.Name = value
 				DebugSpawnEnemy(nil, args)
 			end
 		else
-			for _, value in ipairs(enemyWave3) do
+			for _, value in ipairs(enemyWave4) do
 				args.Name = value
 				DebugSpawnEnemy(nil, args)
 				DebugSpawnEnemy(nil, args)

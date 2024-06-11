@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed Ephyra rooms having far too many elemental essence rewards
+- Fixed Ephyra reinforcements increasing in difficulty 1 room earlier than intended
+
+# Changed
+
+- Toned down Ephyra reinforcements slightly
+
 ## [0.5.0] - 2024-06-09
 
 ### Added
