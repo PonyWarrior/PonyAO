@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed some keepsakes that can't be upgraded by the Artificer being upgraded anyway and causing a crash.
+
 ## [0.5.1] - 2024-06-11
 
 ### Fixed
@@ -14,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Ephyra rooms having far too many elemental essence rewards
 - Fixed Ephyra reinforcements increasing in difficulty 1 room earlier than intended
 
-# Changed
+### Changed
 
 - Toned down Ephyra reinforcements slightly
 

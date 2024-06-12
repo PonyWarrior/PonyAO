@@ -126,6 +126,14 @@ if config.CardChanges.Enabled then
 		end
 		return false
 	end
+
+	function IsArtificerUpgradeValid(traitName)
+		local trait = TraitData[traitName]
+		if trait.RarityLevels == nil or trait.RarityLevels.Heroic == nil then
+			return false
+		end
+		return true
+	end
 end
 
 if config.TestamentsChanges.Enabled then

@@ -678,8 +678,11 @@ if config.CardChanges.Enabled then
 		})
 
 		ModUtil.Path.Wrap("EquipKeepsake", function(base, heroUnit, traitName, args)
-			if IsArtificerEquipped() then
+			if IsArtificerEquipped() and IsArtificerUpgradeValid(traitName) then
 				EquipKeepsake_wrap(heroUnit, traitName, args)
+			elseif IsArtificerEquipped() then
+				print("Equipped keepsake can't be upgraded by artificer!")
+				base(heroUnit, traitName, args)
 			else
 				base(heroUnit, traitName, args)
 			end
