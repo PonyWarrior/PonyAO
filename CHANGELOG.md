@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2024-06-12
+
 ### Fixed
 
 - Fixed some keepsakes that can't be upgraded by the Artificer being upgraded anyway and causing a crash.
@@ -96,7 +98,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version of the mod!
 
-[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.1...HEAD
+[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.2...HEAD
+[0.5.2]: https://github.com/PonyWarrior/PonyAO/compare/0.5.1...0.5.2
 [0.5.1]: https://github.com/PonyWarrior/PonyAO/compare/0.5.0...0.5.1
 [0.5.0]: https://github.com/PonyWarrior/PonyAO/compare/0.4.2...0.5.0
 [0.4.2]: https://github.com/PonyWarrior/PonyAO/compare/0.4.1...0.4.2
