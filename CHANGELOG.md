@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2024-10-17
+
 ### Notice
 
 - This is an initial patch to fix the mod breaking on load. Some features have been disabled due to olympic update changes, and more could be broken.
@@ -15,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - VowOfAbandon renamed to VowOfVoid
 - Removed VowOfPanic
-- *Some vows are still present in config despite being removed from the game, I may reimplement them.*
+- _Some vows are still present in config despite being removed from the game, I may reimplement them._
 - Removed AxeSpecialUnlimitedBlock
 
 ## [0.5.2] - 2024-06-12
@@ -109,7 +111,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version of the mod!
 
-[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.2...HEAD
+[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.3...HEAD
+[0.5.3]: https://github.com/PonyWarrior/PonyAO/compare/0.5.2...0.5.3
 [0.5.2]: https://github.com/PonyWarrior/PonyAO/compare/0.5.1...0.5.2
 [0.5.1]: https://github.com/PonyWarrior/PonyAO/compare/0.5.0...0.5.1
 [0.5.0]: https://github.com/PonyWarrior/PonyAO/compare/0.4.2...0.5.0
