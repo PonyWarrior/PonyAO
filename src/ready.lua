@@ -127,195 +127,196 @@ if config.TorchImprovements.Enabled then
 	end
 end
 
-if config.AxeSpecialUnlimitedBlock.Enabled then
-	local weaponFile = rom.path.combine(rom.paths.Content, 'Game/Weapons/PlayerWeapons.sjson')
+--removed from the game
+-- if config.AxeSpecialUnlimitedBlock.Enabled then
+-- 	local weaponFile = rom.path.combine(rom.paths.Content, 'Game/Weapons/PlayerWeapons.sjson')
 
-	sjson.hook(weaponFile, function(sjsonData)
-		for _, v in ipairs(sjsonData.Weapons) do
-			if v.Name == "WeaponAxeBlock2" then
-				for key, value in pairs(v) do
-					if key ~= "Effects" then
-						v[key] = nil
-					end
-				end
-				v.Name = "WeaponAxeBlock2"
-				v.InheritFrom = "1_BaseDamagingWeapon"
-				v.Control = "Attack3"
-				v.Type = "GUN"
-				v.Projectile = "ProjectileAxeBlockSpin"
-				v.ClipSize = 1
-				v.ChargeSoundFadeTime = 0.25
-				v.FullyAutomatic = true
-				v.ChargeCancelMovement = true
-				v.CancelMovement = true
-				v.RootOwnerWhileFiring = true
-				v.BlockMoveInput = true
-				v.AutoLock = false
-				v.ChargeStartFx = "null"
-				v.ProjectileOffsetStart = "LEFT"
-				v.FireGraphic = "Melinoe_Axe_Special1_FireLoop"
-				v.FireOnRelease = false
-				v.TurboReleaseTimeRequireRelease = 0.2
-				v.OnlyChargeOnce = true
-				v.OnWeaponChargingSound = "/VO/MelinoeEmotes/EmoteCastingAlt"
-				v.OnWeaponChargingSoundChance = 1
-				v.ChargeTimeFrames = 6
-				v.Cooldown = 0.24
-				v.ChargeStartAnimation = "Melinoe_Axe_Special1_Start"
-				v.LockTriggerForCharge = true
-				v.TriggerReleaseGraphic = "Melinoe_Axe_Special1_End"
-				v.ChargeCancelGraphic = "null"
-				v.BarrelLength = 140
-				v.AllowExternalForceRelease = true
-				v.FailedToFireCooldownAnimation = "null"
-				v.FailedToFireCooldownDuration = 0.15
-				v.BlockedByAllOtherFireRequest = true
-			elseif v.Name == "WeaponAxeSpecialSwing" then
-				for key, value in pairs(v) do
-					if key ~= "Effects" then
-						v[key] = nil
-					end
-				end
-				v.Name = "WeaponAxeSpecialSwing"
-				v.InheritFrom = "1_BaseDamagingWeapon"
-				v.Control = "Attack3"
-				v.Type = "GUN"
-				v.Projectile = "ProjectileAxeBlock2"
-				v.ClipSize = 1
-				v.ChargeSoundFadeTime = 0.25
-				v.FullyAutomatic = true
-				v.ChargeCancelMovement = true
-				v.CancelMovement = true
-				v.RootOwnerWhileFiring = true
-				v.BlockMoveInput = true
-				v.AutoLock = false
-				v.ChargeStartFx = "null"
-				v.ProjectileOffsetStart = "LEFT"
-				v.FireGraphic = "Melinoe_Axe_SpecialEx1_Fire"
-				v.FireOnRelease = false
-				v.DefaultControl = false
-				v.OnlyChargeOnce = true
-				v.ChargeTime = 0.05
-				v.ChargeStartAnimation = "Melinoe_Axe_SpecialEx1_Start"
-				v.ChargeCancelGraphic = "null"
-				v.LockTriggerForCharge = true
-				v.TriggerReleaseGraphic = "null"
-				v.AllowExternalForceRelease = true
-				v.FailedToFireCooldownAnimation = "null"
-				v.FailedToFireCooldownDuration = 0.15
-				v.LoseControlIfNotCharging = true
-				v.ControlWindow = 0.25
-				v.PriorityFireRequest = true
-				v.SetCompleteAngleOnFire = true
-				v.FireAtAttackTarget = true
-				v.LockTriggerTransferFromOnSwap = false
-				v.RemoveControlOnCharge = "WeaponCast"
-				v.RemoveControlOnCharge2 = "WeaponAxeBlock2"
-				v.AddControlOnFire = "WeaponCast"
-				v.AddControlOnFire2 = "WeaponAxeBlock2"
-				v.AddControlOnChargeCancel = "WeaponCast"
-				v.AddControlOnChargeCancel2 = "WeaponAxeBlock2"
-				v.BarrelLength = 820
-				v.NumProjectiles = 3
-				v.ProjectileIntervalStart = 0.01
-				v.ProjectileInterval = 0.2
-				v.ProjectileSpacing = 460
-				v.ProjectileAngleOffset = 0
-				v.ProjectileAngleStartOffset = 90
-			end
-		end
-	end)
+-- 	sjson.hook(weaponFile, function(sjsonData)
+-- 		for _, v in ipairs(sjsonData.Weapons) do
+-- 			if v.Name == "WeaponAxeBlock2" then
+-- 				for key, value in pairs(v) do
+-- 					if key ~= "Effects" then
+-- 						v[key] = nil
+-- 					end
+-- 				end
+-- 				v.Name = "WeaponAxeBlock2"
+-- 				v.InheritFrom = "1_BaseDamagingWeapon"
+-- 				v.Control = "Attack3"
+-- 				v.Type = "GUN"
+-- 				v.Projectile = "ProjectileAxeBlockSpin"
+-- 				v.ClipSize = 1
+-- 				v.ChargeSoundFadeTime = 0.25
+-- 				v.FullyAutomatic = true
+-- 				v.ChargeCancelMovement = true
+-- 				v.CancelMovement = true
+-- 				v.RootOwnerWhileFiring = true
+-- 				v.BlockMoveInput = true
+-- 				v.AutoLock = false
+-- 				v.ChargeStartFx = "null"
+-- 				v.ProjectileOffsetStart = "LEFT"
+-- 				v.FireGraphic = "Melinoe_Axe_Special1_FireLoop"
+-- 				v.FireOnRelease = false
+-- 				v.TurboReleaseTimeRequireRelease = 0.2
+-- 				v.OnlyChargeOnce = true
+-- 				v.OnWeaponChargingSound = "/VO/MelinoeEmotes/EmoteCastingAlt"
+-- 				v.OnWeaponChargingSoundChance = 1
+-- 				v.ChargeTimeFrames = 6
+-- 				v.Cooldown = 0.24
+-- 				v.ChargeStartAnimation = "Melinoe_Axe_Special1_Start"
+-- 				v.LockTriggerForCharge = true
+-- 				v.TriggerReleaseGraphic = "Melinoe_Axe_Special1_End"
+-- 				v.ChargeCancelGraphic = "null"
+-- 				v.BarrelLength = 140
+-- 				v.AllowExternalForceRelease = true
+-- 				v.FailedToFireCooldownAnimation = "null"
+-- 				v.FailedToFireCooldownDuration = 0.15
+-- 				v.BlockedByAllOtherFireRequest = true
+-- 			elseif v.Name == "WeaponAxeSpecialSwing" then
+-- 				for key, value in pairs(v) do
+-- 					if key ~= "Effects" then
+-- 						v[key] = nil
+-- 					end
+-- 				end
+-- 				v.Name = "WeaponAxeSpecialSwing"
+-- 				v.InheritFrom = "1_BaseDamagingWeapon"
+-- 				v.Control = "Attack3"
+-- 				v.Type = "GUN"
+-- 				v.Projectile = "ProjectileAxeBlock2"
+-- 				v.ClipSize = 1
+-- 				v.ChargeSoundFadeTime = 0.25
+-- 				v.FullyAutomatic = true
+-- 				v.ChargeCancelMovement = true
+-- 				v.CancelMovement = true
+-- 				v.RootOwnerWhileFiring = true
+-- 				v.BlockMoveInput = true
+-- 				v.AutoLock = false
+-- 				v.ChargeStartFx = "null"
+-- 				v.ProjectileOffsetStart = "LEFT"
+-- 				v.FireGraphic = "Melinoe_Axe_SpecialEx1_Fire"
+-- 				v.FireOnRelease = false
+-- 				v.DefaultControl = false
+-- 				v.OnlyChargeOnce = true
+-- 				v.ChargeTime = 0.05
+-- 				v.ChargeStartAnimation = "Melinoe_Axe_SpecialEx1_Start"
+-- 				v.ChargeCancelGraphic = "null"
+-- 				v.LockTriggerForCharge = true
+-- 				v.TriggerReleaseGraphic = "null"
+-- 				v.AllowExternalForceRelease = true
+-- 				v.FailedToFireCooldownAnimation = "null"
+-- 				v.FailedToFireCooldownDuration = 0.15
+-- 				v.LoseControlIfNotCharging = true
+-- 				v.ControlWindow = 0.25
+-- 				v.PriorityFireRequest = true
+-- 				v.SetCompleteAngleOnFire = true
+-- 				v.FireAtAttackTarget = true
+-- 				v.LockTriggerTransferFromOnSwap = false
+-- 				v.RemoveControlOnCharge = "WeaponCast"
+-- 				v.RemoveControlOnCharge2 = "WeaponAxeBlock2"
+-- 				v.AddControlOnFire = "WeaponCast"
+-- 				v.AddControlOnFire2 = "WeaponAxeBlock2"
+-- 				v.AddControlOnChargeCancel = "WeaponCast"
+-- 				v.AddControlOnChargeCancel2 = "WeaponAxeBlock2"
+-- 				v.BarrelLength = 820
+-- 				v.NumProjectiles = 3
+-- 				v.ProjectileIntervalStart = 0.01
+-- 				v.ProjectileInterval = 0.2
+-- 				v.ProjectileSpacing = 460
+-- 				v.ProjectileAngleOffset = 0
+-- 				v.ProjectileAngleStartOffset = 90
+-- 			end
+-- 		end
+-- 	end)
 
-	WeaponData.WeaponAxeBlock2 = {
-		Name = "WeaponAxeBlock2",
-		StartingWeapon = false,
-		ShowManaIndicator = true,
-		ExpireProjectilesOnFire = { "ProjectileAxeSpin" },
-		DoProjectileBlockPresentation = true,
-		OnChargeFunctionNames = { "DoWeaponCharge", "CheckAxeBlockThread" },
-		ChargeWeaponData =
-		{
-			EmptyChargeFunctionName = "EmptyAxeBlockCharge",
-			OnStageReachedFunctionName = "AxeBlockChargeStage",
-		},
-		ChargeWeaponStages =
-		{
-			{
-				ManaCost = 30,
-				Wait = 0.77,
-				SkipManaSpendOnFire = true,
-				DeferSwap = "WeaponAxeSpecialSwing",
-				ChannelSlowEventOnStart = true,
-				CompleteObjective = "WeaponAxeSpecialSwing",
-			},
-		},
+-- 	WeaponData.WeaponAxeBlock2 = {
+-- 		Name = "WeaponAxeBlock2",
+-- 		StartingWeapon = false,
+-- 		ShowManaIndicator = true,
+-- 		ExpireProjectilesOnFire = { "ProjectileAxeSpin" },
+-- 		DoProjectileBlockPresentation = true,
+-- 		OnChargeFunctionNames = { "DoWeaponCharge", "CheckAxeBlockThread" },
+-- 		ChargeWeaponData =
+-- 		{
+-- 			EmptyChargeFunctionName = "EmptyAxeBlockCharge",
+-- 			OnStageReachedFunctionName = "AxeBlockChargeStage",
+-- 		},
+-- 		ChargeWeaponStages =
+-- 		{
+-- 			{
+-- 				ManaCost = 30,
+-- 				Wait = 0.77,
+-- 				SkipManaSpendOnFire = true,
+-- 				DeferSwap = "WeaponAxeSpecialSwing",
+-- 				ChannelSlowEventOnStart = true,
+-- 				CompleteObjective = "WeaponAxeSpecialSwing",
+-- 			},
+-- 		},
 
-		DefaultKnockbackForce = 480,
-		DefaultKnockbackScale = 0.6,
-		HideChargeDuration = 0.45,
-		SkipAttackNotReadySounds = true,
-		NoControlSound = "/Leftovers/SFX/OutOfAmmo2",
+-- 		DefaultKnockbackForce = 480,
+-- 		DefaultKnockbackScale = 0.6,
+-- 		HideChargeDuration = 0.45,
+-- 		SkipAttackNotReadySounds = true,
+-- 		NoControlSound = "/Leftovers/SFX/OutOfAmmo2",
 
-		Sounds =
-		{
-			FireSounds =
-			{
-				{ Name = "/SFX/Player Sounds/ZagreusFistWhoosh" },
-			},
-			ImpactSounds =
-			{
-				Invulnerable = "/SFX/Player Sounds/ZagreusShieldRicochet",
-				Armored = "/SFX/Player Sounds/ZagreusShieldRicochet",
-				Bone = "/SFX/Player Sounds/ShieldObstacleHit",
-				Brick = "/SFX/Player Sounds/ShieldObstacleHit",
-				Stone = "/SFX/Player Sounds/ShieldObstacleHit",
-				Organic = "/SFX/Player Sounds/ShieldObstacleHit",
-				StoneObstacle = "/SFX/SwordWallHitClankSmall",
-				BrickObstacle = "/SFX/SwordWallHitClankSmall",
-				MetalObstacle = "/SFX/SwordWallHitClankSmall",
-				BushObstacle = "/Leftovers/World Sounds/LeavesRustle",
-				Shell = "/SFX/ShellImpact",
-			},
-		},
+-- 		Sounds =
+-- 		{
+-- 			FireSounds =
+-- 			{
+-- 				{ Name = "/SFX/Player Sounds/ZagreusFistWhoosh" },
+-- 			},
+-- 			ImpactSounds =
+-- 			{
+-- 				Invulnerable = "/SFX/Player Sounds/ZagreusShieldRicochet",
+-- 				Armored = "/SFX/Player Sounds/ZagreusShieldRicochet",
+-- 				Bone = "/SFX/Player Sounds/ShieldObstacleHit",
+-- 				Brick = "/SFX/Player Sounds/ShieldObstacleHit",
+-- 				Stone = "/SFX/Player Sounds/ShieldObstacleHit",
+-- 				Organic = "/SFX/Player Sounds/ShieldObstacleHit",
+-- 				StoneObstacle = "/SFX/SwordWallHitClankSmall",
+-- 				BrickObstacle = "/SFX/SwordWallHitClankSmall",
+-- 				MetalObstacle = "/SFX/SwordWallHitClankSmall",
+-- 				BushObstacle = "/Leftovers/World Sounds/LeavesRustle",
+-- 				Shell = "/SFX/ShellImpact",
+-- 			},
+-- 		},
 
-		Upgrades = {},
-	}
+-- 		Upgrades = {},
+-- 	}
 
-	WeaponData.WeaponAxeSpecialSwing = {
-		Name = "WeaponAxeSpecialSwing",
-		StartingWeapon = false,
-		IsExWeapon = true,
-		OnChargeFunctionName = "SpendQueuedMana",
+-- 	WeaponData.WeaponAxeSpecialSwing = {
+-- 		Name = "WeaponAxeSpecialSwing",
+-- 		StartingWeapon = false,
+-- 		IsExWeapon = true,
+-- 		OnChargeFunctionName = "SpendQueuedMana",
 
-		DefaultKnockbackForce = 960,
-		DefaultKnockbackScale = 1.2,
+-- 		DefaultKnockbackForce = 960,
+-- 		DefaultKnockbackScale = 1.2,
 
-		Sounds =
-		{
-			FireSounds =
-			{
-				{ Name = "/VO/MelinoeEmotes/EmotePoweringUp" },
-				{ Name = "/SFX/Player Sounds/ZagreusFistWhoosh" },
-			},
-			ImpactSounds =
-			{
-				Invulnerable = "/SFX/SwordWallHitClank",
-				Armored = "/SFX/Player Sounds/ZagreusShieldRicochet",
-				Bone = "/SFX/MetalBoneSmashSHIELD",
-				Brick = "/SFX/MetalStoneClangSHIELD",
-				Stone = "/SFX/MetalStoneClangSHIELD",
-				Organic = "/SFX/MetalOrganicHitSHIELD",
-				StoneObstacle = "/SFX/Player Sounds/ShieldObstacleHit",
-				BrickObstacle = "/SFX/Player Sounds/ShieldObstacleHit",
-				MetalObstacle = "/SFX/Player Sounds/ShieldObstacleHit",
-				BushObstacle = "/Leftovers/World Sounds/LeavesRustle",
-			},
-		},
-		OnFiredFunctionName = "RevertWeaponChanges",
-		Upgrades = {},
-	}
+-- 		Sounds =
+-- 		{
+-- 			FireSounds =
+-- 			{
+-- 				{ Name = "/VO/MelinoeEmotes/EmotePoweringUp" },
+-- 				{ Name = "/SFX/Player Sounds/ZagreusFistWhoosh" },
+-- 			},
+-- 			ImpactSounds =
+-- 			{
+-- 				Invulnerable = "/SFX/SwordWallHitClank",
+-- 				Armored = "/SFX/Player Sounds/ZagreusShieldRicochet",
+-- 				Bone = "/SFX/MetalBoneSmashSHIELD",
+-- 				Brick = "/SFX/MetalStoneClangSHIELD",
+-- 				Stone = "/SFX/MetalStoneClangSHIELD",
+-- 				Organic = "/SFX/MetalOrganicHitSHIELD",
+-- 				StoneObstacle = "/SFX/Player Sounds/ShieldObstacleHit",
+-- 				BrickObstacle = "/SFX/Player Sounds/ShieldObstacleHit",
+-- 				MetalObstacle = "/SFX/Player Sounds/ShieldObstacleHit",
+-- 				BushObstacle = "/Leftovers/World Sounds/LeavesRustle",
+-- 			},
+-- 		},
+-- 		OnFiredFunctionName = "RevertWeaponChanges",
+-- 		Upgrades = {},
+-- 	}
 
-end
+-- end
 
 if config.StaffImprovements.Enabled then
 	local weaponFile = rom.path.combine(rom.paths.Content, 'Game/Weapons/PlayerWeapons.sjson')
@@ -737,7 +738,7 @@ if config.TestamentsChanges.Enabled then
 	end
 
 
-	if config.TestamentsChanges.VowOfAbandon.Enabled then
+	if config.TestamentsChanges.VowOfVoid.Enabled then
 		ModUtil.Path.Wrap("EquipMetaUpgrades", function(base, hero, args)
 			if GetNumShrineUpgrades("NoMetaUpgradesShrineUpgrade") >= 1 then
 				EquipMetaUpgrades_wrap(hero, args)
@@ -798,43 +799,43 @@ end
 if config.TroveChanges.Enabled then
 	if config.TroveChanges.EqualWeight.Enabled then
 		EncounterSets.TimeChallengeOptions = {
-			"MoneyTimeChallengeSwitch",
+			"TimeChallengeSwitch_Money",
 			--"MoneyTimeChallengeSwitch2",
 			--"MoneyTimeChallengeSwitch3",
 
-			"HealthTimeChallengeSwitch",
+			--"HealthTimeChallengeSwitch",
 			--"HealthTimeChallengeSwitch2",
 			--"HealthTimeChallengeSwitch3",
 
-			"MetaCurrencyTimeChallengeSwitch",
+			--"MetaCurrencyTimeChallengeSwitch",
 			--"MetaCurrencyTimeChallengeSwitch2",
 			--"MetaCurrencyTimeChallengeSwitch3",
 		}
 	end
 	if config.TroveChanges.DisableDecay.Enabled then
-		ObstacleData.HealthTimeChallengeSwitch.UseLootDecay = false
-		ObstacleData.MetaCurrencyTimeChallengeSwitch.UseLootDecay = false
-		ObstacleData.MoneyTimeChallengeSwitch.UseLootDecay = false
+		ObstacleData.ChallengeSwitch.UseLootDecay = false
 	end
 	if config.TroveChanges.EnableHealthTroves.Enabled then
-		for index, req in ipairs(ObstacleData.HealthTimeChallengeSwitch.Requirements) do
-			if req.PathTrue and Contains(req.PathTrue, "TimeChallenge") then
-				ObstacleData.HealthTimeChallengeSwitch.Requirements[index] = {
-					Path = { "GameState", "EncountersCompletedCache" },
-					HasAny = { "TimeChallengeF", "TimeChallengeG", "TimeChallengeI", "TimeChallengeO" }
-				}
-			end
-		end
+		--TODO BROKEN
+		-- for index, req in ipairs(ObstacleData.ChallengeSwitch.Requirements) do
+		-- 	if req.PathTrue and Contains(req.PathTrue, "TimeChallenge") then
+		-- 		ObstacleData.ChallengeSwitch.Requirements[index] = {
+		-- 			Path = { "GameState", "EncountersCompletedCache" },
+		-- 			HasAny = { "TimeChallengeF", "TimeChallengeG", "TimeChallengeI", "TimeChallengeO" }
+		-- 		}
+		-- 	end
+		-- end
 	end
 	if config.TroveChanges.EnableBoneTroves then
-		for index, req in ipairs(ObstacleData.MetaCurrencyTimeChallengeSwitch.Requirements) do
-			if req.PathTrue and Contains(req.PathTrue, "TimeChallenge") then
-				ObstacleData.MetaCurrencyTimeChallengeSwitch.Requirements[index] = {
-					Path = { "GameState", "EncountersCompletedCache" },
-					HasAny = { "TimeChallengeF", "TimeChallengeG", "TimeChallengeI", "TimeChallengeO" }
-				}
-			end
-		end
+		--TODO BROKEN
+		-- for index, req in ipairs(ObstacleData.MetaCurrencyTimeChallengeSwitch.Requirements) do
+		-- 	if req.PathTrue and Contains(req.PathTrue, "TimeChallenge") then
+		-- 		ObstacleData.MetaCurrencyTimeChallengeSwitch.Requirements[index] = {
+		-- 			Path = { "GameState", "EncountersCompletedCache" },
+		-- 			HasAny = { "TimeChallengeF", "TimeChallengeG", "TimeChallengeI", "TimeChallengeO" }
+		-- 		}
+		-- 	end
+		-- end
 	end
 end
 
@@ -1148,3 +1149,18 @@ if config.ExtraLastStandsFirst.Enabled then
 		CheckLastStand_override(victim, triggerArgs)
 	end)
 end
+
+-- if config.ExcludeHeroic.Enabled then
+-- 	ModUtil.Path.Context.Wrap("HeroicDowngradeBoons", function()
+-- 		ModUtil.Path.Wrap("IsGodTrait", function(base, traitName, args)
+-- 			local bool = base(traitName, args)
+-- 			if bool then
+-- 				local traitData = GetHeroTrait(traitName)
+-- 				if traitData and traitData.Rarity and traitData.Rarity == "Heroic" then
+-- 					return false
+-- 				end
+-- 			end
+-- 			return bool
+-- 		end)
+-- 	end)
+-- end

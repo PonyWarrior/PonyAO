@@ -93,6 +93,7 @@ if config.CardChanges.Enabled then
 
 			local rarity = GetRarityKey(GetKeepsakeLevel(traitName))
 			rarity = GetUpgradedRarity(rarity)
+
 			local traitData = AddTrait(unit, traitName, rarity, args)
 			if not CurrentRun.Hero.IsDead then
 				CurrentRun.TraitCache[traitName] = CurrentRun.TraitCache[traitName] or 1
@@ -116,7 +117,7 @@ if config.CardChanges.Enabled then
 	end
 
 	function IsArtificerEquipped()
-		if GetNumShrineUpgrades("NoMetaUpgradesShrineUpgrade") >= 1 then
+		if GetNumShrineUpgrades("LimitGraspShrineUpgrade") >= 1 then
 			return false
 		end
 		for metaUpgradeName, metaUpgradeData in pairs(GameState.MetaUpgradeState) do
@@ -155,8 +156,8 @@ if config.TestamentsChanges.Enabled then
 		"ShrineLevel13",
 		"ShrineLevel5",
 	})
-	if config.TestamentsChanges.VowOfAbandon.Enabled then
-		OverwriteTableKeys(MetaUpgradeData.NoMetaUpgradesShrineUpgrade.Ranks, {
+	if config.TestamentsChanges.VowOfVoid.Enabled then
+		OverwriteTableKeys(MetaUpgradeData.LimitGraspShrineUpgrade.Ranks, {
 			{ Points = 1, ChangeValue = 20 },
 			{ Points = 1, ChangeValue = 40 },
 			{ Points = 1, ChangeValue = 60 },
@@ -166,7 +167,7 @@ if config.TestamentsChanges.Enabled then
 	
 		function EquipMetaUpgrades_wrap(hero, args)
 			local skipTraitHighlight = args.SkipTraitHighlight or false
-			local ranks = GetNumShrineUpgrades("NoMetaUpgradesShrineUpgrade")
+			local ranks = GetNumShrineUpgrades("LimitGraspShrineUpgrade")
 	
 			for metaUpgradeName, metaUpgradeData in pairs(GameState.MetaUpgradeState) do
 				if IsMetaupgradeDisabled(metaUpgradeName, ranks) then
@@ -189,7 +190,7 @@ if config.TestamentsChanges.Enabled then
 	
 		function GetCurrentMetaUpgradeCost_wrap()
 			local totalCost = 0
-			local ranks = GetNumShrineUpgrades("NoMetaUpgradesShrineUpgrade")
+			local ranks = GetNumShrineUpgrades("LimitGraspShrineUpgrade")
 	
 			for metaUpgradeName, metaUpgradeData in pairs(GameState.MetaUpgradeState) do
 				if MetaUpgradeCardData[metaUpgradeName] and MetaUpgradeCardData[metaUpgradeName].Cost and metaUpgradeData.Equipped then
@@ -206,7 +207,7 @@ if config.TestamentsChanges.Enabled then
 		end
 	
 		function TraitTrayShowMetaUpgrades_wrap(screen, activeCategory, args)
-			local ranks = GetNumShrineUpgrades("NoMetaUpgradesShrineUpgrade")
+			local ranks = GetNumShrineUpgrades("LimitGraspShrineUpgrade")
 			local equippedMetaUpgradesNum = 0
 			for k, upgrade in pairs(GameState.MetaUpgradeState) do
 				if upgrade.Equipped then
@@ -313,7 +314,7 @@ if config.TestamentsChanges.Enabled then
 		end
 	
 		function UpdateMetaUpgradeCard_wrap(screen, row, column)
-			local ranks = GetNumShrineUpgrades("NoMetaUpgradesShrineUpgrade")
+			local ranks = GetNumShrineUpgrades("LimitGraspShrineUpgrade")
 			local button = screen.Components[GetMetaUpgradeKey(row, column)]
 			local cardName = button.CardName
 			local text = "MetaUpgrade_Locked"
@@ -562,12 +563,13 @@ if config.TestamentsChanges.Enabled then
 			{ Points = 12, ChangeValue = 150 }, -- 7
 		})
 	end
-	if config.TestamentsChanges.VowOfPanic.Enabled then
-		OverwriteTableKeys(MetaUpgradeData.RoomStartManaShrineUpgrade.Ranks, {
-			{ Points = 1, ChangeValue = 0.5 }, -- 1
-			{ Points = 1, ChangeValue = 0.0 }, -- 2
-		})
-	end
+	--TODO removed from game, reimplement?
+	-- if config.TestamentsChanges.VowOfPanic.Enabled then
+	-- 	OverwriteTableKeys(MetaUpgradeData.RoomStartManaShrineUpgrade.Ranks, {
+	-- 		{ Points = 1, ChangeValue = 0.5 }, -- 1
+	-- 		{ Points = 1, ChangeValue = 0.0 }, -- 2
+	-- 	})
+	-- end
 	if config.TestamentsChanges.VowOfArrogance.Enabled then
 		OverwriteTableKeys(MetaUpgradeData.BoonManaReserveShrineUpgrade.Ranks, {
 			{ Points = 1, ChangeValue = 5 }, -- 1

@@ -20,8 +20,6 @@ Overhauls different aspects of the game, fully configurable.
 
 - TranquilGainRework : Reworks Demeter's Tranquil Gain. When your Magick falls under a percentage, your magick is fully restored after a delay. This delay increases every time this occurs, resetting each location.
 
-- AxeSpecialUnlimitedBlock : Let's you block indefinitely with the axe special.
-
 - AlwaysManaRegen : Makes mana regeneration never be canceled.
 
 - WhiteAntlerHealthCap : Caps your maximum health to 30 when using the White Antler.

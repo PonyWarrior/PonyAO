@@ -44,9 +44,9 @@ local config = {
 		EpicMultiplier = 0.5,
 		HeroicMultiplier = 0.25
 	},
-	AxeSpecialUnlimitedBlock = {
-		Enabled = true,
-	},
+	-- AxeSpecialUnlimitedBlock = {
+	-- 	Enabled = true,
+	-- },
 	AlwaysManaRegen = {
 		Enabled = true,
 	},
@@ -64,7 +64,7 @@ local config = {
 	},
 	TestamentsChanges = {
 		Enabled = true,
-		VowOfAbandon = {
+		VowOfVoid = {
 			Enabled = true
 		},
 		VowOfForsaking = {
@@ -94,9 +94,9 @@ local config = {
 		VowOfDesperation = {
 			Enabled = true
 		},
-		VowOfPanic = {
-			Enabled = true
-		},
+		-- VowOfPanic = {
+		-- 	Enabled = true
+		-- },
 		VowOfArrogance = {
 			Enabled = true
 		},
@@ -180,9 +180,9 @@ local description = {
 		EpicMultiplier = "Epic rarity multiplier. Affects BaseDelayIncrease.",
 		HeroicMultiplier = "Heroic rarity multiplier. Affects BaseDelayIncrease.",
 	},
-	AxeSpecialUnlimitedBlock = {
-		Enabled = "Enable to be able to block indefinitely with the axe special."
-	},
+	-- AxeSpecialUnlimitedBlock = {
+	-- 	Enabled = "Enable to be able to block indefinitely with the axe special."
+	-- },
 	AlwaysManaRegen = {
 		Enabled = "Enable to make mana regeneration never be canceled."
 	},
@@ -200,7 +200,7 @@ local description = {
 	},
 	TestamentsChanges = {
 		Enabled = "Enable to apply testament changes. Each change can be disabled and enabled individually.",
-		VowOfAbandon = {
+		VowOfVoid = {
 			Enabled = "Enable to make the vow of abandon incremental."
 		},
 		VowOfForsaking = {

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Notice
+
+- This is an initial patch to fix the mod breaking on load. Some features have been disabled due to olympic update changes, and more could be broken.
+
+### Changes
+
+- VowOfAbandon renamed to VowOfVoid
+- Removed VowOfPanic
+- *Some vows are still present in config despite being removed from the game, I may reimplement them.*
+- Removed AxeSpecialUnlimitedBlock
+
 ## [0.5.2] - 2024-06-12
 
 ### Fixed
