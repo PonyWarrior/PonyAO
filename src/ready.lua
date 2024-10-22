@@ -1142,6 +1142,23 @@ if config.EphyraOverhaul.Enabled then
 			end
 		end
 	end
+
+	-- Add nil check for EliteAttributes
+	ModUtil.Path.Override("CalculateEnemyDifficultyRating", function(enemyName, room)
+		local difficultyRating = EnemyData[enemyName].GeneratorData.DifficultyRating
+
+		if EnemyData[enemyName].IsElite and room.EliteAttributes ~= nil and room.EliteAttributes[enemyName] ~= nil then
+			local difficultyRatingMultiplier = 1
+			for k, attributeName in pairs(room.EliteAttributes[enemyName]) do
+				if EnemyData[enemyName].EliteAttributeData[attributeName].DifficultyRatingMultiplier ~= nil then
+					difficultyRatingMultiplier = difficultyRatingMultiplier + EnemyData[enemyName].EliteAttributeData[attributeName].DifficultyRatingMultiplier - 1
+				end
+			end
+			difficultyRating = difficultyRating * difficultyRatingMultiplier
+		end
+
+		return difficultyRating
+	end)
 end
 
 if config.ExtraLastStandsFirst.Enabled then
