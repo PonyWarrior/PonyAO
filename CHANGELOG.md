@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Fixed 2 crashes
+- Hera x Hephaestus Duo Boon "Cherished Heirloom" can no longer appear if you have the Artificer card changes enabled and the Artificer card equipped (fixes a crash)
+
 ## [0.5.4] - 2024-10-22
 
 ### Fixed

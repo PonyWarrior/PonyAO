@@ -686,7 +686,7 @@ if config.EchoKeepsakeChange.Enabled then
 			end
 		end
 
-		CheckNewTraitManaReserveShrineUpgrade(newTrait)
+		CheckNewTraitManaReserveShrineUpgrade(newTrait, args)
 
 		SetLightBarColor({ PlayerIndex = 1, Color = CurrentRun.Hero.LightBarColor or { 0.0, 0.0, 0.0, 0.0 } })
 	end
@@ -829,13 +829,10 @@ if config.ExtraLastStandsFirst.Enabled then
 
 	function PickLastStand(lastStands)
 		local lastStand = nil
-		-- stubborn defiance, currently not in the game but you never know
-		if not IsMetaUpgradeActive("ExtraChanceReplenishMetaUpgrade") then
-			for i, lastStandData in pairs(lastStands) do
-				if lastStandData.Icon ~= "ExtraLifeStyx" then
-					lastStand = table.remove(lastStands, i)
-					return lastStand
-				end
+		for i, lastStandData in pairs(lastStands) do
+			if lastStandData.Icon ~= "ExtraLifeStyx" then
+				lastStand = table.remove(lastStands, i)
+				return lastStand
 			end
 		end
 		lastStand = table.remove(lastStands)

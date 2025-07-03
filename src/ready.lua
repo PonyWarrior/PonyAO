@@ -679,7 +679,7 @@ if config.CardChanges.Enabled then
 		})
 
 		ModUtil.Path.Wrap("EquipKeepsake", function(base, heroUnit, traitName, args)
-			if IsArtificerEquipped() and IsArtificerUpgradeValid(traitName) then
+			if IsArtificerEquipped() and traitName ~= nil and IsArtificerUpgradeValid(traitName) then
 				EquipKeepsake_wrap(heroUnit, traitName, args)
 			elseif IsArtificerEquipped() then
 				print("Equipped keepsake can't be upgraded by artificer!")
@@ -687,6 +687,13 @@ if config.CardChanges.Enabled then
 			else
 				base(heroUnit, traitName, args)
 			end
+		end)
+
+		ModUtil.LoadOnce(function()
+			table.insert(TraitData.KeepsakeLevelBoon.GameStateRequirements,
+				{
+					PathFalse = { "CurrentRun", "Hero", "TraitDictionary", "MetaToRunMetaUpgrade" },
+				})
 		end)
 	end
 
