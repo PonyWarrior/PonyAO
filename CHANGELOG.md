@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.5] - 2025-07-03
+
 ### Changed
 
 - Fixed 2 crashes
@@ -122,7 +124,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version of the mod!
 
-[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.4...HEAD
+[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.5...HEAD
+[0.5.5]: https://github.com/PonyWarrior/PonyAO/compare/0.5.4...0.5.5
 [0.5.4]: https://github.com/PonyWarrior/PonyAO/compare/0.5.3...0.5.4
 [0.5.3]: https://github.com/PonyWarrior/PonyAO/compare/0.5.2...0.5.3
 [0.5.2]: https://github.com/PonyWarrior/PonyAO/compare/0.5.1...0.5.2
