@@ -30,7 +30,8 @@ if config.TranquilGainRework.Enabled then
 			CurrentRun.CurrentRoom.DemeterRegenProcTimes = CurrentRun.CurrentRoom.DemeterRegenProcTimes + 1
 		end
 		local traitArgs = regenTrait.SetupFunction.Args
-		local delay = traitArgs.RegenPenaltyDuration + ((CurrentRun.CurrentRoom.DemeterRegenProcTimes - 1) * traitArgs.DelayIncreaseDuration)
+		local delay = traitArgs.RegenPenaltyDuration +
+		((CurrentRun.CurrentRoom.DemeterRegenProcTimes - 1) * traitArgs.DelayIncreaseDuration)
 		CreateAnimation({ Name = traitArgs.ManaRegenStartFx, DestinationId = CurrentRun.Hero.ObjectId, OffsetX = 0, Scale = 10 })
 		PlaySound({ Name = traitArgs.ManaRegenStartSound, Id = CurrentRun.Hero.ObjectId })
 		wait(delay, "DemeterRegen")
@@ -60,7 +61,8 @@ if config.WhiteAntlerHealthCap.Enabled then
 	function ValidateMaxHealth_wrap(blockDelta)
 		-- todo : make max health rewards that heal work
 		local expectedMaxHealth = HeroData.MaxHealth
-		expectedMaxHealth = math.max(1, round(expectedMaxHealth * GetTotalHeroTraitValue("MaxHealthMultiplier", { IsMultiplier = true })))
+		expectedMaxHealth = math.max(1,
+			round(expectedMaxHealth * GetTotalHeroTraitValue("MaxHealthMultiplier", { IsMultiplier = true })))
 		if expectedMaxHealth ~= CurrentRun.Hero.MaxHealth then
 			local delta = expectedMaxHealth - CurrentRun.Hero.MaxHealth
 			local newMaxHealth = math.max(1, round(CurrentRun.Hero.MaxHealth + delta))
@@ -115,29 +117,386 @@ if config.CardChanges.Enabled then
 			end
 		end
 	end
-
-	function IsArtificerEquipped()
-		if GetNumShrineUpgrades("LimitGraspShrineUpgrade") >= 1 then
-			return false
-		end
-		for metaUpgradeName, metaUpgradeData in pairs(GameState.MetaUpgradeState) do
-			if metaUpgradeName == "MetaToRunUpgrade" and MetaUpgradeCardData[metaUpgradeName] and metaUpgradeData.Equipped and MetaUpgradeCardData[metaUpgradeName].TraitName then
-				return true
-			end
-		end
-		return false
-	end
-
-	function IsArtificerUpgradeValid(traitName)
-		local trait = TraitData[traitName]
-		if trait.RarityLevels == nil or trait.RarityLevels.Heroic == nil then
-			return false
-		end
-		return true
-	end
 end
 
 if config.TestamentsChanges.Enabled then
+	--fix rarity out of range crashes
+	for i = 6, 26, 1 do
+		TraitRarityData.WeaponRarityUpgradeOrder[i] = "Perfect"
+	end
+
+	function OpenShrineScreen_override(args)
+		args = args or {}
+
+		AltAspectRatioFramesShow()
+
+		local screen = DeepCopyTable( ScreenData.Shrine )
+		local components = screen.Components
+
+		local showHint = true
+		if GameState.ScreensViewed.Shrine then
+			showHint = false
+		end
+
+		SetAlpha({ Id = HUDScreen.Components.BountyReadyConfirm.Id, Fraction = 0.0, Duration = 0.2 })
+
+		HideCombatUI( screen.Name )
+		OnScreenOpened( screen )
+
+		CreateScreenFromData( screen, screen.ComponentData )
+
+		OverwriteTableKeys( screen, args )
+
+		local firstView = not GameState.ScreensViewed[screen.Name]
+
+		components.LevelUpStatHighlight = CreateScreenComponent({ Name = "ShrineStatHighlight", Group = "Combat_Menu" })
+		SetAlpha({ Id = components.LevelUpStatHighlight.Id, Fraction = 0.0 })
+		ScreenAnchors.LevelUpStatHighlightId = components.LevelUpStatHighlight.Id
+
+		screen.NumItems = 0
+
+		screen.ItemStartX = screen.ItemStartX + ScreenCenterNativeOffsetX
+		screen.ItemStartY = screen.ItemStartY + ScreenCenterNativeOffsetY
+		screen.BountyRowStartX = screen.BountyRowStartX + ScreenCenterNativeOffsetX
+		screen.BountyRowStartY = screen.BountyRowStartY + ScreenCenterNativeOffsetY
+
+		local itemLocationX = screen.ItemStartX
+		local itemLocationY = screen.ItemStartY
+		local firstUseable = false
+		for index, upgradeName in ipairs( ShrineUpgradeOrder ) do
+			local upgradeData = MetaUpgradeData[upgradeName]
+			local maxRank = GetShrineUpgradeMaxRank( upgradeData )
+			if maxRank > 0 then
+				if upgradeData.UseWideAnimations then
+					itemLocationX = screen.ItemStartX + screen.WideItemOffsetX
+				end
+
+				local startOffsetY = 10
+
+				local backing = CreateScreenComponent({
+					Name = "BlankObstacle", 
+					Group = screen.ComponentData.DefaultGroup,
+					X = itemLocationX,
+					Y = itemLocationY + startOffsetY,
+					Scale = screen.IconBackingScale
+				})
+
+				local fadeDuration = index * 0.018
+				Move({ Id = backing.Id, Duration = fadeDuration * 1.2 + 0.24, OffsetX = itemLocationX, OffsetY = itemLocationY, EaseIn = 0.9, EaseOut = 1})
+				SetAlpha({ Id = backing.Id, Fraction = 0 })
+				SetAlpha({ Id = backing.Id, Fraction = 1, Duration = fadeDuration, EaseIn = 0, EaseOut = 1 })
+				SetScale({ Id = backing.Id, Fraction = 0.8 })
+				SetScale({ Id = backing.Id, Fraction = 1, Duration = fadeDuration, EaseIn = 0, EaseOut = 1 })
+				components["ItemBacking"..index] = backing
+				AttachLua({ Id = backing.Id, Table = backing })
+				backing.Screen = screen
+				backing.Data = upgradeData
+
+				local highlightAnimation = screen.SelectionHighlightAnimation
+				if upgradeData.UseWideAnimations then
+					highlightAnimation = screen.SelectionHighlightWideAnimation
+				end
+				local highlight = CreateScreenComponent({
+					Name = "BlankObstacle",
+					Group = screen.ComponentData.DefaultGroup,
+					X = itemLocationX,
+					Y = itemLocationY,
+					Animation = highlightAnimation,
+					Alpha = 0.0
+				})
+				components["ItemHighlight"..index] = highlight
+				AttachLua({ Id = highlight.Id, Table = highlight })
+				highlight.Screen = screen
+
+				local buttonName = "ButtonShrineItem"
+				local iconOffsetX = screen.IconOffsetX
+				local iconOffsetY = screen.IconOffsetY
+				if upgradeData.UseWideAnimations then
+					buttonName = "ButtonShrineItemWide"
+					iconOffsetX = iconOffsetX + screen.WideIconGroupShiftX
+				end
+				local button = CreateScreenComponent({
+					Name = buttonName,
+					Group = screen.ComponentData.DefaultGroup,
+					X = itemLocationX + iconOffsetX,
+					Y = itemLocationY + iconOffsetY,
+					Animation = upgradeData.Icon,
+					Scale = screen.IconScale
+				})
+				components["ItemButton"..index] = button
+				AttachLua({ Id = button.Id, Table = button })
+				button.Screen = screen
+				button.Data = upgradeData
+				button.Backing = backing
+				button.Highlight = highlight
+				if upgradeData.UseWideAnimations then
+					button.GlintAnimationName = screen.SelectionHighlightWideGlintAnimation
+				else
+					button.GlintAnimationName = screen.SelectionHighlightGlintAnimation
+				end
+				button.OnMouseOverFunctionName = "ShrineScreenMouseOverItem"
+				button.OnMouseOffFunctionName = "ShrineScreenMouseOffItem"
+				button.OnPressedFunctionName = "ShrineScreenRankUp"
+
+				local nextRankBackingOffsetX = screen.NextRankBackingOffsetX
+				local nextRankBackingOffsetY = screen.NextRankBackingOffsetY
+				if upgradeData.UseWideAnimations then
+					nextRankBackingOffsetX = screen.NextRankBackingWideOffsetX
+					nextRankBackingOffsetY = screen.NextRankBackingWideOffsetY
+				end
+				local nextRankBacking = CreateScreenComponent({
+					Name = "BlankObstacle",
+					Group = screen.ComponentData.DefaultGroup,
+					X = itemLocationX + nextRankBackingOffsetX,
+					Y = itemLocationY + nextRankBackingOffsetY,
+					Alpha = 0.0
+				})
+				components["NextRankBacking"..index] = nextRankBacking
+				AttachLua({ Id = nextRankBacking.Id, Table = nextRankBacking })
+				nextRankBacking.Screen = screen
+				nextRankBacking.Button = button
+				button.NextRankBacking = nextRankBacking
+
+				local nextRankFormat = ShallowCopyTable( screen.NextRankFormat )
+				nextRankFormat.Id = nextRankBacking.Id
+				CreateTextBox( nextRankFormat )
+
+				button.RankPips = {}
+				local pipOffsetX = screen.RankPipStartOffsetX
+				local pipOffsetY = screen.RankPipStartOffsetY
+				if upgradeData.UseWideAnimations then
+					pipOffsetX = pipOffsetX + screen.WideIconGroupShiftX
+				end
+				--MOD START
+				local rank4reset = false
+				local rank8reset = false
+				local rank12reset = false
+				for rank = 1, maxRank do
+					if rank > 4 and not rank4reset then
+						pipOffsetY = pipOffsetY + 10
+						rank4reset = true
+						pipOffsetX = screen.RankPipStartOffsetX
+					end
+					if rank > 8 and not rank8reset then
+						pipOffsetY = pipOffsetY + 10
+						rank8reset = true
+						pipOffsetX = screen.RankPipStartOffsetX
+					end
+					if rank > 12 and not rank12reset then
+						pipOffsetY = pipOffsetY + 10
+						rank12reset = true
+						pipOffsetX = screen.RankPipStartOffsetX
+					end
+					--MOD END
+					local rankPip = CreateScreenComponent({
+						Name = "BlankObstacle",
+						Group = screen.ComponentData.DefaultGroup,
+						Scale = screen.RankPipScale,
+						X = itemLocationX + pipOffsetX,
+						Y = itemLocationY + pipOffsetY
+					})
+					--MOD START
+					components["RankPips" .. rank .. index + 10] = rankPip
+					--MOD END
+					AttachLua({ Id = rankPip.Id, Table = rankPip })
+					rankPip.Screen = screen
+					button.RankPips[rank] = rankPip
+
+					pipOffsetX = pipOffsetX + screen.RankPipSpacingX
+					pipOffsetY = pipOffsetY + screen.RankPipSpacingY
+				end
+
+				ShrineScreenUpdateNextRankText( button, true )
+
+				ShrineUpgradeExtractValues( upgradeName )
+
+				local shortNameFormat = ShallowCopyTable( screen.ShortNameFormat )
+				local currentRank = GetNumShrineUpgrades( upgradeData.Name )
+				if currentRank > 0 then
+					shortNameFormat = ShallowCopyTable( screen.ShortNameActiveFormat )
+				end
+				shortNameFormat.Id = button.Id
+				shortNameFormat.Text = upgradeData.Name.."_Short"
+				CreateTextBox( shortNameFormat )
+
+				-- Hidden description for tooltips
+				SetInteractProperty({ DestinationId = button.Id, Property = "TooltipX", Value = screen.TooltipX + ScreenCenterNativeOffsetX })
+				SetInteractProperty({ DestinationId = button.Id, Property = "TooltipY", Value = screen.TooltipY + ScreenCenterNativeOffsetY })
+				CreateTextBox({ Id = button.Id,
+					Text = upgradeName,
+					UseDescription = true,
+					Color = Color.Transparent,
+					LuaKey = "TooltipData",
+					LuaValue = upgradeData,
+				})
+
+				if index == 1 then
+					TeleportCursor({ DestinationId = button.Id, ForceUseCheck = true })
+				end
+
+				if upgradeData.RankRevealedFunctionName ~= nil then
+					local worldUpgradeName = upgradeName.."Rank"..maxRank
+					if not GameState.WorldUpgradesRevealed[worldUpgradeName] then
+						thread( CallFunctionName, upgradeData.RankRevealedFunctionName, screen, button, { Rank = maxRank } )
+					end
+					GameState.WorldUpgradesRevealed[worldUpgradeName] = true
+				end
+
+				if index % screen.ItemsPerRow == 0 then
+					itemLocationX = screen.ItemStartX
+					itemLocationY = itemLocationY + screen.ItemSpacingY
+				else
+					itemLocationX = itemLocationX + screen.ItemSpacingX
+				end		
+
+				screen.NumItems = screen.NumItems + 1
+			end
+		end
+
+		screen.PrevShrineUpgrades = ShallowCopyTable( GameState.ShrineUpgrades )
+
+		local currentWeaponName = GetEquippedWeapon()
+
+		local completeBountyNum = 0
+		local availableBountyNum = 0
+		local totalBountyNum = 0
+		local itemLocationX = screen.BountyRowStartX
+		local itemLocationY = screen.BountyRowStartY
+		for i, bountyName in ipairs( screen.BountyOrder ) do
+			local bountyData = BountyData[bountyName]
+			local weaponName = nil
+			local matchedWeapon = false
+			local shrinePoints = nil
+			if bountyData.CompleteGameStateRequirements ~= nil then
+				for j, completeRequirement in ipairs( bountyData.CompleteGameStateRequirements ) do
+					if completeRequirement.HasAny ~= nil then
+						weaponName = completeRequirement.HasAny[1]
+						if CurrentRun.Hero.Weapons[weaponName] then
+							matchedWeapon = true
+						end
+					end
+					if completeRequirement.Value ~= nil then
+						shrinePoints = completeRequirement.Value
+					end
+				end
+				
+				totalBountyNum = totalBountyNum + 1
+				if GameState.ShrineBountiesCompleted[bountyName] then
+					completeBountyNum = completeBountyNum + 1
+				else
+					if bountyData.UnlockGameStateRequirements ~= nil and IsGameStateEligible( bountyData, bountyData.UnlockGameStateRequirements ) then		
+						availableBountyNum = availableBountyNum + 1
+						local key = "BountyAvailable"..availableBountyNum
+						if availableBountyNum <= screen.MaxBountiesAvailable then
+
+							local targetItem = CreateScreenComponent({
+								Name = "BlankObstacle",
+								Group = screen.ComponentData.DefaultGroup,
+								X = itemLocationX + screen.BountyTargetOffsetX,
+								Y = itemLocationY + screen.BountyTargetOffsetY,
+								Animation = screen.BountyTargetIcons[bountyData.Encounters[1]],
+								Scale = screen.BountyBossIconScale
+							})
+							components[key.."Target"] = targetItem
+
+							local bountyBacking = CreateScreenComponent({
+								Name = "BlankObstacle",
+								Group = screen.ComponentData.DefaultGroup,
+								X = itemLocationX,
+								Y = itemLocationY,
+								Animation = "GUI\\Screens\\Shrine\\Testament",
+								Scale = 1.0
+							})
+							components[key.."Backing"] = bountyBacking
+
+							local shrinePointItem = CreateScreenComponent({
+								Name = "BlankObstacle",
+								Group = screen.ComponentData.DefaultGroup,
+								X = itemLocationX + screen.BountyShrinePointsOffsetX,
+								Y = itemLocationY + screen.BountyShrinePointsOffsetY
+							})
+							shrinePointItem.BountyData = bountyData
+							shrinePointItem.MatchedWeapon = matchedWeapon
+							shrinePointItem.WeaponName = weaponName
+							shrinePointItem.RequiredShrinePoints = shrinePoints
+							components[key.."ShrinePoints"] = shrinePointItem
+							local bountyShrinePointsFormat = ShallowCopyTable( screen.BountyShrinePointsFormat )
+							bountyShrinePointsFormat.Id = shrinePointItem.Id
+							bountyShrinePointsFormat.Text = "ShrineScreen_BountyShrinePoints"
+							bountyShrinePointsFormat.LuaKey = "TempTextData"
+							bountyShrinePointsFormat.LuaValue = { RequiredShrinePoints = shrinePoints }
+							CreateTextBox( bountyShrinePointsFormat )
+
+							local weaponItem = CreateScreenComponent({
+								Name = "BlankObstacle",
+								Group = screen.ComponentData.DefaultGroup,
+								X = itemLocationX + screen.BountyWeaponOffsetX,
+								Y = itemLocationY + screen.BountyWeaponOffsetY,
+								Animation = screen.BountyWeaponIcons[weaponName],
+								Scale = screen.BountyWeaponIconScale
+							})
+							components[key.."Weapon"] = weaponItem
+
+							if availableBountyNum % screen.BountyItemsPerRow == 0 then
+								itemLocationX = screen.BountyRowStartX
+								itemLocationY = itemLocationY + screen.BountyRowSpacingY
+							else
+								itemLocationX = itemLocationX + screen.BountyRowSpacingX
+							end
+
+						end
+					end
+				end
+
+			end
+		end
+
+		ModifyTextBox({ Id = components.BountyHeader.Id, LuaKey = "TempTextData", LuaValue = { WeaponName = currentWeaponName, Completed = completeBountyNum, Total = totalBountyNum, }, })
+
+		if components.SkellyQuestSurface ~= nil then
+			local surfaceShrinePointRecord = GameState.HighestShrinePointClearSurfaceCache
+			local underworldShrinePointRecord = GameState.HighestShrinePointClearUnderworldCache
+			DebugAssert({ Condition = (#screen.UnderworldShrinePointThresholds == #screen.SurfaceShrinePointThresholds), Text = "Underworld and Surface do not have the same number of shrine point thresholds!", Owner = "Caleb" })
+			for i=1,#screen.UnderworldShrinePointThresholds do
+				local underworldThreshold = screen.UnderworldShrinePointThresholds[i]
+				local surfaceThreshold = screen.SurfaceShrinePointThresholds[i]
+				if surfaceShrinePointRecord >= surfaceThreshold and underworldShrinePointRecord >= underworldThreshold then
+					-- Both runs complete, move to next threshold
+				else
+					screen.NextSurfaceSkellyShrinePointGoal = surfaceThreshold
+					if surfaceShrinePointRecord >= surfaceThreshold then
+						SetAnimation({ DestinationId = components.SkellyQuestSurface.Id, Name = "GUI\\Screens\\Shrine\\SkellyComplete" })
+						ModifyTextBox({ Id = components.SkellyQuestSurface.Id, Text = "ShrineScreen_SkellyStatueSurface_Complete", FadeTarget = 1.0 })
+						SetAlpha({ Id = components.SkellyQuestSurfaceStrikethrough.Id, Fraction = 1.0, Duration = 0.2 })
+					end
+
+					screen.NextUnderworldSkellyShrinePointGoal = underworldThreshold
+					if underworldShrinePointRecord >= underworldThreshold then
+						SetAnimation({ DestinationId = components.SkellyQuestUnderworld.Id, Name = "GUI\\Screens\\Shrine\\SkellyComplete" })
+						ModifyTextBox({ Id = components.SkellyQuestUnderworld.Id, Text = "ShrineScreen_SkellyStatueUnderworld_Complete", FadeTarget = 1.0 })
+						SetAlpha({ Id = components.SkellyQuestUnderworldStrikethrough.Id, Fraction = 1.0, Duration = 0.2 })
+					end
+					break
+				end
+			end
+			ShrineScreenUpdateSkellyText( screen )
+		end
+
+		ShrineScreenUpdateActivePoints( screen, nil, { Duration = 0.0 } )
+		screen.StartingBounty = screen.ActiveBounty
+		ShrineScreenUpdateItems( screen )
+		
+		if showHint then
+			GenericInfoPresentation( screen )
+		end
+
+		ShrineScreenOpenFinishedPresentation( screen )
+
+		screen.KeepOpen = true
+		HandleScreenInput( screen )
+
+	end
+
 	-- Extra ranks text
 	OverwriteTableKeys(TraitRarityData.ShrineRarityText, {
 		[0] = "ShrineLevel0",
@@ -164,18 +523,19 @@ if config.TestamentsChanges.Enabled then
 			{ Points = 1, ChangeValue = 80 },
 			{ Points = 1, ChangeValue = 100 },
 		})
-	
+
 		function EquipMetaUpgrades_wrap(hero, args)
 			local skipTraitHighlight = args.SkipTraitHighlight or false
 			local ranks = GetNumShrineUpgrades("LimitGraspShrineUpgrade")
-	
+
 			for metaUpgradeName, metaUpgradeData in pairs(GameState.MetaUpgradeState) do
 				if IsMetaupgradeDisabled(metaUpgradeName, ranks) then
 					GameState.MetaUpgradeState[metaUpgradeName].Equipped = nil
 				elseif MetaUpgradeCardData[metaUpgradeName] and metaUpgradeData.Equipped and MetaUpgradeCardData[metaUpgradeName].TraitName and not HeroHasTrait(MetaUpgradeCardData[metaUpgradeName].TraitName) then
 					local cardMultiplier = 1
 					if GameState.MetaUpgradeState[metaUpgradeName].AdjacencyBonuses and GameState.MetaUpgradeState[metaUpgradeName].AdjacencyBonuses.CustomMultiplier then
-						cardMultiplier = cardMultiplier + GameState.MetaUpgradeState[metaUpgradeName].AdjacencyBonuses.CustomMultiplier
+						cardMultiplier = cardMultiplier +
+						GameState.MetaUpgradeState[metaUpgradeName].AdjacencyBonuses.CustomMultiplier
 					end
 					AddTraitToHero({
 						SkipNewTraitHighlight = skipTraitHighlight,
@@ -187,11 +547,11 @@ if config.TestamentsChanges.Enabled then
 				end
 			end
 		end
-	
+
 		function GetCurrentMetaUpgradeCost_wrap()
 			local totalCost = 0
 			local ranks = GetNumShrineUpgrades("LimitGraspShrineUpgrade")
-	
+
 			for metaUpgradeName, metaUpgradeData in pairs(GameState.MetaUpgradeState) do
 				if MetaUpgradeCardData[metaUpgradeName] and MetaUpgradeCardData[metaUpgradeName].Cost and metaUpgradeData.Equipped then
 					if IsMetaupgradeDisabled(metaUpgradeName, ranks) then
@@ -201,11 +561,11 @@ if config.TestamentsChanges.Enabled then
 					end
 				end
 			end
-	
+
 			GameState.MetaUpgradeCostCache = totalCost
 			return totalCost
 		end
-	
+
 		function TraitTrayShowMetaUpgrades_wrap(screen, activeCategory, args)
 			local ranks = GetNumShrineUpgrades("LimitGraspShrineUpgrade")
 			local equippedMetaUpgradesNum = 0
@@ -214,12 +574,12 @@ if config.TestamentsChanges.Enabled then
 					equippedMetaUpgradesNum = equippedMetaUpgradesNum + 1
 				end
 			end
-	
+
 			local traitSpacingX = activeCategory.TraitSpacingX or screen.TraitSpacingX
 			if equippedMetaUpgradesNum >= activeCategory.TraitsNeededForExtendedSpacing then
 				traitSpacingX = activeCategory.ExtendedTraitSpacingX
 			end
-	
+
 			local components = screen.Components
 			local firstTrait = nil
 			local highlightedTrait = nil
@@ -235,14 +595,17 @@ if config.TestamentsChanges.Enabled then
 						local metaUpgradeCardData = MetaUpgradeCardData[metaUpgradeName]
 						if metaUpgradeCardData.TraitName ~= nil and HeroHasTrait(metaUpgradeCardData.TraitName) then
 							local trait = GetHeroTrait(metaUpgradeCardData.TraitName)
-							local traitFrameId = CreateScreenObstacle({ Name = "BlankObstacle", X = xOffset, Y = yOffset, Group = screen.ComponentData.DefaultGroup, Scale = 0.7, Alpha = 0.0 })
+							local traitFrameId = CreateScreenObstacle({ Name = "BlankObstacle", X = xOffset, Y = yOffset, Group =
+							screen.ComponentData.DefaultGroup, Scale = 0.7, Alpha = 0.0 })
 							--Attach({ Id = traitFrameId, DestinationId = traitIcon.Id })
 							SetAnimation({ Name = "DevCard_EquippedHighlight", DestinationId = traitFrameId })
 							SetAlpha({ Id = traitFrameId, Fraction = 1.0, Duration = 0.1 })
 							table.insert(screen.Frames, traitFrameId)
-	
+
 							local iconScale = 0.15
-							local traitIcon = CreateScreenComponent({ Name = "TraitTrayIconButton", X = xOffset, Y = yOffset, Group = screen.ComponentData.DefaultGroup, Animation = metaUpgradeCardData.Image, Scale = iconScale, Alpha = 0.0 })
+							local traitIcon = CreateScreenComponent({ Name = "TraitTrayIconButton", X = xOffset, Y =
+							yOffset, Group = screen.ComponentData.DefaultGroup, Animation = metaUpgradeCardData.Image, Scale =
+							iconScale, Alpha = 0.0 })
 							AttachLua({ Id = traitIcon.Id, Table = traitIcon })
 							traitIcon.Screen = screen
 							traitIcon.OnMouseOverFunctionName = "TraitTrayIconButtonMouseOver"
@@ -266,20 +629,20 @@ if config.TestamentsChanges.Enabled then
 								Scale = 0.0,
 								Hide = true,
 							})
-	
+
 							if args.DisableTooltips then
 								ModifyTextBox({ Id = traitIcon.Id, BlockTooltip = true })
 							end
-	
+
 							table.insert(components, traitIcon)
 							traitIcon.TraitData = trait
 							screen.Icons[traitIcon.Id] = traitIcon
-	
+
 							if not firstTrait then
 								highlightedTrait = traitIcon
 								firstTrait = true
 							end
-	
+
 							local uniqueTraitName = TraitTrayGetUniqueName(traitIcon)
 							if uniqueTraitName == args.HighlightName or uniqueTraitName == activeCategory.PrevHighlightName then
 								highlightedTrait = traitIcon
@@ -288,16 +651,17 @@ if config.TestamentsChanges.Enabled then
 								highlightedTrait = traitIcon
 								MapState.TraitTrayMetaUpgradePriorityHighlight = nil
 							end
-	
+
 							screen.TraitComponentDictionary[uniqueTraitName] = traitIcon
 							if screen.AutoPin and not activeCategory.OpenedOnce and IsPossibleMetaUpgradeAutoPin(trait) then
 								table.insert(screen.PossibleAutoPins, traitIcon)
 							end
-	
+
 							displayedTraitNum = displayedTraitNum + 1
 							if displayedTraitNum % (activeCategory.TraitsPerColumn or screen.TraitsPerColumn) == 0 then
 								xOffset = xOffset + traitSpacingX
-								yOffset = ScreenHeight - (activeCategory.TraitStartBottomOffset or screen.TraitStartBottomOffset)
+								yOffset = ScreenHeight -
+								(activeCategory.TraitStartBottomOffset or screen.TraitStartBottomOffset)
 							else
 								yOffset = yOffset + (activeCategory.TraitSpacingY or screen.TraitSpacingY)
 							end
@@ -305,26 +669,26 @@ if config.TestamentsChanges.Enabled then
 					end
 				end
 			end
-	
+
 			highlightedTrait = highlightedTrait
 			if highlightedTrait ~= nil then
 				wait(0.02)
 				SetHighlightedTraitFrame(screen, highlightedTrait)
 			end
 		end
-	
+
 		function UpdateMetaUpgradeCard_wrap(screen, row, column)
 			local ranks = GetNumShrineUpgrades("LimitGraspShrineUpgrade")
 			local button = screen.Components[GetMetaUpgradeKey(row, column)]
 			local cardName = button.CardName
 			local text = "MetaUpgrade_Locked"
 			local state = "HIDDEN"
-	
+
 			DestroyTextBox({ Id = button.Id })
 			if not GameState.MetaUpgradeState[cardName] then
 				return
 			end
-	
+
 			if GameState.MetaUpgradeState[cardName].Unlocked then
 				text = cardName
 				state = "UNLOCKED"
@@ -332,7 +696,7 @@ if config.TestamentsChanges.Enabled then
 				text = cardName
 				state = "LOCKED"
 			end
-	
+
 			--MOD START
 			if IsMetaupgradeDisabled(cardName, ranks) then
 				text = cardName
@@ -340,7 +704,7 @@ if config.TestamentsChanges.Enabled then
 				button.CardDisabled = true
 			end
 			--MOD END
-	
+
 			local metaUpgradeData = MetaUpgradeCardData[cardName]
 			local newZoom = {}
 			if state == "UNLOCKED" then
@@ -364,8 +728,9 @@ if config.TestamentsChanges.Enabled then
 			elseif state == "LOCKED" then
 				newZoom.OffsetX = screen.LockedCardCostTitleArgs.OffsetX * 5 / screen.ZoomLevel
 				newZoom.OffsetY = screen.LockedCardCostTitleArgs.OffsetY * 5 / screen.ZoomLevel
-				CreateTextBox(MergeAllTables({ { Id = button.Id, Text = MetaUpgradeCardData[cardName].Cost }, screen.LockedCardCostTitleArgs, newZoom }))
-	
+				CreateTextBox(MergeAllTables({ { Id = button.Id, Text = MetaUpgradeCardData[cardName].Cost }, screen
+					.LockedCardCostTitleArgs, newZoom }))
+
 				newZoom.OffsetX = screen.LockedCardResourceTextArgs.OffsetX * 5 / screen.ZoomLevel
 				newZoom.OffsetY = nil
 			elseif state == "HIDDEN" then
@@ -374,7 +739,7 @@ if config.TestamentsChanges.Enabled then
 				SetAlpha({ Id = button.CardCornersId, Fraction = 0.0 })
 				CreateTextBox(MergeAllTables({ { Id = button.Id, Text = text }, screen.HiddenCardTitleTextArgs, newZoom }))
 			end
-	
+
 			if state ~= "HIDDEN" then
 				-- Hidden description for tooltip
 				CreateTextBox({
@@ -394,15 +759,17 @@ if config.TestamentsChanges.Enabled then
 						Color = Color.Transparent,
 					})
 				end
-	
+
 				if GetMetaUpgradeLevel(button.CardName) > 1 then
-					SetAnimation({ DestinationId = button.TypeIconId, Name = "CardRarityPatch", OffsetX = -400 / screen.ZoomLevel, OffsetY = -500 / screen.ZoomLevel })
+					SetAnimation({ DestinationId = button.TypeIconId, Name = "CardRarityPatch", OffsetX = -400 /
+					screen.ZoomLevel, OffsetY = -500 / screen.ZoomLevel })
 					local rarity = TraitRarityData.RarityUpgradeOrder[GetMetaUpgradeLevel(button.CardName)]
 					SetColor({ Id = button.TypeIconId, Color = Color["BoonPatch" .. rarity] })
 				else
 					SetAnimation({ Name = "Blank", DestinationId = button.TypeIconId })
 				end
-				SetAnimation({ Name = MetaUpgradeCardData[button.CardName].Image, DestinationId = button.CardArtId, Scale = screen.DefaultArtScale })
+				SetAnimation({ Name = MetaUpgradeCardData[button.CardName].Image, DestinationId = button.CardArtId, Scale =
+				screen.DefaultArtScale })
 				if state == "LOCKED" then
 					SetHSV({ Id = button.CardArtId, HSV = { 0, -1, -0.1 }, ValueChangeType = "Absolute" })
 					SetHSV({ Id = button.CardCornersId, HSV = { 0, -1, -0.25 }, ValueChangeType = "Absolute" })
@@ -412,7 +779,8 @@ if config.TestamentsChanges.Enabled then
 				if HasStoreItemPin(button.StoreName) then
 					AddStoreItemPinPresentation(button, { AnimationName = "MetaUpgradeItemPin", SkipVoice = true })
 					-- Silent toolip
-					CreateTextBox({ Id = button.Id, TextSymbolScale = 0, Text = "StoreItemPinTooltip", Color = Color.Transparent, })
+					CreateTextBox({ Id = button.Id, TextSymbolScale = 0, Text = "StoreItemPinTooltip", Color = Color
+					.Transparent, })
 				end
 			else
 				SetAnimation({ Name = "DevBacking", DestinationId = button.CardArtId, Scale = screen.DefaultArtScale })
@@ -554,12 +922,12 @@ if config.TestamentsChanges.Enabled then
 	end
 	if config.TestamentsChanges.VowOfDesperation.Enabled then
 		OverwriteTableKeys(MetaUpgradeData.BiomeSpeedShrineUpgrade.Ranks, {
-			{ Points = 1, ChangeValue = 540 }, -- 1
-			{ Points = 2, ChangeValue = 420 }, -- 2
-			{ Points = 3, ChangeValue = 300 }, -- 3
-			{ Points = 5, ChangeValue = 240 }, -- 4
-			{ Points = 7, ChangeValue = 210 }, -- 5
-			{ Points = 9, ChangeValue = 180 }, -- 6
+			{ Points = 1,  ChangeValue = 540 }, -- 1
+			{ Points = 2,  ChangeValue = 420 }, -- 2
+			{ Points = 3,  ChangeValue = 300 }, -- 3
+			{ Points = 5,  ChangeValue = 240 }, -- 4
+			{ Points = 7,  ChangeValue = 210 }, -- 5
+			{ Points = 9,  ChangeValue = 180 }, -- 6
 			{ Points = 12, ChangeValue = 150 }, -- 7
 		})
 	end
@@ -636,7 +1004,8 @@ if config.EchoKeepsakeChange.Enabled then
 		LogUpgradeChoice(button)
 		PlaySound({ Name = button.LootData.UpgradeSelectedSound or "/SFX/HeatRewardDrop", Id = buttonId })
 		CreateAnimation({ Name = "BoonGetBlack", DestinationId = buttonId, Scale = 1.0, GroupName = "Combat_Menu" })
-		CreateAnimation({ Name = "BoonGet", DestinationId = buttonId, Scale = 1.0, GroupName = "Combat_Menu_Additive", Color = button.BoonGetColor or button.LootColor })
+		CreateAnimation({ Name = "BoonGet", DestinationId = buttonId, Scale = 1.0, GroupName = "Combat_Menu_Additive", Color =
+		button.BoonGetColor or button.LootColor })
 		--wait( 0.4, RoomThreadName )
 		local source = screen.Source
 		local spawnTarget = nil
@@ -793,7 +1162,9 @@ if config.ExtraLastStandsFirst.Enabled then
 			ChargeSpell(-1000)
 		end
 		triggerArgs.HasLastStand = HasLastStand(victim)
-		ExpireProjectiles({ ExcludeNames = ConcatTableValues(ShallowCopyTable(WeaponSets.ExpireProjectileExcludeProjectileNames), ShallowCopyTable(WeaponSets.ExpireProjectileLastStandExcludeProjectileNames)) })
+		ExpireProjectiles({ ExcludeNames = ConcatTableValues(
+		ShallowCopyTable(WeaponSets.ExpireProjectileExcludeProjectileNames),
+			ShallowCopyTable(WeaponSets.ExpireProjectileLastStandExcludeProjectileNames)) })
 
 		if MapState.FamiliarUnit ~= nil then
 			RunEventsGeneric(MapState.FamiliarUnit.LastStandEvents, MapState.FamiliarUnit)

@@ -131,6 +131,9 @@ local config = {
 	ExtraLastStandsFirst = {
 		Enabled = true
 	},
+	-- ExcludeHeroic = {
+	-- 	Enabled = true
+	-- },
 }
 
 local description = {
@@ -267,6 +270,9 @@ local description = {
 	ExtraLastStandsFirst = {
 		Enabled = "Enable to make extra last stands be used first."
 	},
+	-- ExcludeHeroic = {
+	-- 	Enabled = "Enable to make Bridal Glow and Rare Crop never pick Heroic boons."
+	-- },
 }
 
 return config, description

@@ -663,7 +663,26 @@ if config.CardChanges.Enabled then
 		})
 	end
 
-	if config.CardChanges.Artificer.Enabled then
+	if config.CardChanges.Enabled and config.CardChanges.Artificer.Enabled then
+		function IsArtificerEquipped()
+			if GetNumShrineUpgrades("LimitGraspShrineUpgrade") >= 1 then
+				return false
+			end
+			for metaUpgradeName, metaUpgradeData in pairs(GameState.MetaUpgradeState) do
+				if metaUpgradeName == "MetaToRunUpgrade" and MetaUpgradeCardData[metaUpgradeName] and metaUpgradeData.Equipped and MetaUpgradeCardData[metaUpgradeName].TraitName then
+					return true
+				end
+			end
+			return false
+		end
+
+		function IsArtificerUpgradeValid(traitName)
+			local trait = TraitData[traitName]
+			if trait.RarityLevels == nil or trait.RarityLevels.Heroic == nil then
+				return false
+			end
+			return true
+		end
 
 		sjson.hook(textfile, function(sjsonData)
 			for _, v in ipairs(sjsonData.Texts) do
@@ -744,6 +763,10 @@ if config.TestamentsChanges.Enabled then
 		end
 	end
 
+	--fix vow pips on testament screen
+	ModUtil.Path.Override("OpenShrineScreen", function(args)
+		OpenShrineScreen_override(args)
+	end)
 
 	if config.TestamentsChanges.VowOfVoid.Enabled then
 		ModUtil.Path.Wrap("EquipMetaUpgrades", function(base, hero, args)

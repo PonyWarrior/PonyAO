@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Fixed crash when viewing vows in boon tray
+- Fixed artificer card changes staying active with all card changes disabled
+- Modified vow screen to accomodate the extra rank pips
+
 ## [0.5.5] - 2025-07-03
 
 ### Changed
