@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.6] - 2025-08-14
+
 - Fixed crash when viewing vows in boon tray
 - Fixed artificer card changes staying active with all card changes disabled
 - Modified vow screen to accomodate the extra rank pips
@@ -128,7 +130,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version of the mod!
 
-[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.5...HEAD
+[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.6...HEAD
+[0.5.6]: https://github.com/PonyWarrior/PonyAO/compare/0.5.5...0.5.6
 [0.5.5]: https://github.com/PonyWarrior/PonyAO/compare/0.5.4...0.5.5
 [0.5.4]: https://github.com/PonyWarrior/PonyAO/compare/0.5.3...0.5.4
 [0.5.3]: https://github.com/PonyWarrior/PonyAO/compare/0.5.2...0.5.3
