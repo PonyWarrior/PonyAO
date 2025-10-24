@@ -12,10 +12,7 @@ Overhauls different aspects of the game, fully configurable.
 
 - CardChanges : Improves the altar of ashes' cards.
   - SwiftRunner : Make the swift runner increase the number of dashes you can do by 1 (at all ranks).
-  - Messenger : Make the messenger increase your movement speed by 6/9/12/15%.
-  - Night : Make night increase your omega channeling speed by 10/17/23/30%.
-  - Unseen : Make the unseen cost 2 grasp instead of 5.
-  - Death : Make death increase your omega damage by 15/27/38/50%.
+  - Night : Make night increase your omega damage by 15/27/38/50%.
   - Artificer : Make the artificer increase the rarity of your keepsakes by 1 level (at all ranks).
 
 - TranquilGainRework : Reworks Demeter's Tranquil Gain. When your Magick falls under a percentage, your magick is fully restored after a delay. This delay increases every time this occurs, resetting each location.
