@@ -7,13 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.7] - 2025-10-24
+
 - Fixed all card issues (descriptions...)
 - Removed Death, The Messenger and Unseen card changes
 - Night card now increases omega damage (previously Death)
 - Fixed Demeter tranquil gain rework animation and sound, raised default mana threshold to 15% from 10%
 - Fixed Polyphemus jump doing damage (thanks to dwbl)
 - Fixed Staff Improvements not working
-
 
 ## [0.5.6] - 2025-08-14
 
@@ -138,7 +139,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version of the mod!
 
-[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.6...HEAD
+[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.7...HEAD
+[0.5.7]: https://github.com/PonyWarrior/PonyAO/compare/0.5.6...0.5.7
 [0.5.6]: https://github.com/PonyWarrior/PonyAO/compare/0.5.5...0.5.6
 [0.5.5]: https://github.com/PonyWarrior/PonyAO/compare/0.5.4...0.5.5
 [0.5.4]: https://github.com/PonyWarrior/PonyAO/compare/0.5.3...0.5.4
