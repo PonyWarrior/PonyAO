@@ -332,15 +332,34 @@ if config.StaffImprovements.Enabled then
 				v.OnlyChargeOnce = true
 				v.CanCancelDisables = false
 			elseif v.Name == "WeaponStaffSwing5" then
-				v.FireOnRelease = true
+				v.ForceMaxChargeRelease = false
 				v.CancelChargeOnControlRemoved = false
 				v.ChargeTime = config.StaffImprovements.OmegaAttackChargeSpeed
 			end
 		end
 	end
 
+	local function GetCost()
+		local manacost = GetManaCost(WeaponData["WeaponStaffBall"], false, { ManaCostOverride = WeaponData["WeaponStaffBall"].ChargeWeaponStages[1].ManaCost })
+		print(manacost)
+		return manacost
+	end
+
+	local function HasManaCost()
+		local manacost = GetCost()
+		if CurrentRun.Hero.Mana < manacost then
+			return false
+		end
+		return true
+	end
+
 	ModUtil.Path.Override("EmptyStaffCharge", function(weaponName, stageReached)
 		if stageReached > 0 then
+			if HasManaCost() then
+				ManaDelta(-GetCost())
+			else
+				return
+			end
 			local angle = GetAngle({ Id = CurrentRun.Hero.ObjectId })
 			local playerLocation = GetLocation({ Id = CurrentRun.Hero.ObjectId })
 			local startX = playerLocation.X
@@ -383,6 +402,26 @@ if config.StaffImprovements.Enabled then
 		end
 	end)
 
+	OverwriteTableKeys(TraitData.StaffRaiseDeadAspect.WeaponDataOverride.WeaponStaffBall.ChargeWeaponStages[1], {
+		WeaponProperties = {},
+		ProjectileProperties = {},
+		ChannelSlowEventOnStart = false
+	})
+	table.insert(TraitData.StaffRaiseDeadAspect.PropertyChanges, {
+		WeaponName = "WeaponStaffBall",
+		ProjectileName = "ProjectileStaffBallCharged",
+		ProjectileProperty = "DamageRadius",
+		ChangeValue = 435,
+		ChangeType = "Absolute",
+	})
+	table.insert(TraitData.StaffRaiseDeadAspect.PropertyChanges, {
+		WeaponName = "WeaponStaffBall",
+		ProjectileName = "ProjectileStaffBallCharged",
+		ProjectileProperty = "Damage",
+		ChangeValue = 110,
+		ChangeType = "Absolute",
+	})
+
 	OverwriteTableKeys(WeaponData.WeaponStaffBall.ChargeWeaponStages[1], {
 		WeaponProperties = {},
 		ChannelSlowEventOnStart = false
@@ -414,7 +453,7 @@ if config.CardChanges.Enabled then
 	if config.CardChanges.SwiftRunner.Enabled then
 		sjson.hook(textfile, function(sjsonData)
 			for _, v in ipairs(sjsonData.Texts) do
-				if v.Id == "SprintShield" or v.Id == "SprintShieldMetaUpgrade" then
+				if v.Id == "SprintShield" or v.Id == "SprintShieldMetaUpgrade_Tray" then
 					v.Description = "Your {$Keywords.Dash} gains {#UpgradeFormat}{$TooltipData.ExtractData.DashBonus} {#Prev} extra charge(s)."
 				end
 			end
@@ -455,155 +494,186 @@ if config.CardChanges.Enabled then
 					Key = "ReportedDashBonus",
 					ExtractAs = "DashBonus",
 				},
-			}
-		})
-	end
-
-	if config.CardChanges.Messenger.Enabled then
-		sjson.hook(textfile, function(sjsonData)
-			for _, v in ipairs(sjsonData.Texts) do
-				if v.Id == "BonusDodge" or v.Id == "DodgeBonusMetaUpgrade" then
-					v.Description = "You move and {$Keywords.Sprint} {#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipSpeed}% {#Prev}faster."
-				end
-			end
-		end)
-
-		OverwriteTableKeys(TraitData.DodgeBonusMetaUpgrade, {
-			RarityLevels =
-			{
-				Common =
-				{
-					Multiplier = 1
-				},
-				Rare =
-				{
-					Multiplier = 1.5
-				},
-				Epic =
-				{
-					Multiplier = 2.0
-				},
-				Heroic =
-				{
-					Multiplier = 2.5
-				},
 			},
-			PropertyChanges =
+			OnSprintStartAction = 
 			{
+				FunctionName = "",
+				Args =
 				{
-					WeaponNames = { "WeaponSprint" },
-					WeaponProperty = "SelfVelocity",
-					BaseValue = 119,
-					ChangeType = "Add",
-					ExcludeLinked = true,
-				},
-				{
-					WeaponNames = { "WeaponSprint" },
-					WeaponProperty = "SelfVelocityCap",
-					BaseValue = 53,
-					ChangeType = "Add",
-					ExcludeLinked = true,
-				},
-				{
-					UnitProperty = "Speed",
-					ChangeType = "Multiply",
-					BaseValue = 1.06,
-					SourceIsMultiplier = true,
-					ReportValues = { ReportedBaseSpeed = "ChangeValue" },
-				},
-			},
-			ExtractValues = {
-				{
-					Key = "ReportedBaseSpeed",
-					ExtractAs = "TooltipSpeed",
-					Format = "PercentDelta",
-				},
-			}
-		})
-	end
-
-	if config.CardChanges.Night.Enabled then
-
-		sjson.hook(textfile, function(sjsonData)
-			for _, v in ipairs(sjsonData.Texts) do
-				if v.Id == "SorceryRegenUpgrade" or v.Id == "SorceryRegenMetaUpgrade" then
-					v.Description = "You {$Keywords.HoldNoTooltip} your {$Keywords.Omega} {#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipSpeed}% {#Prev}faster."
-				end
-			end
-		end)
-
-		local lookup = ToLookup({ "WeaponTorch", "WeaponTorchSpecial", "WeaponLob", "WeaponLobSpecial", "WeaponAxeBlock2", "WeaponAxeSpin", "WeaponCastArm", "WeaponStaffBall", "WeaponStaffSwing5", "WeaponDaggerThrow", "WeaponDagger5" })
-
-		OverwriteTableKeys(TraitData.SorceryRegenMetaUpgrade, {
-			SetupFunction = {},
-			RarityLevels =
-			{
-				Common =
-				{
-					Multiplier = 1
-				},
-				Rare =
-				{
-					Multiplier = 1.67
-				},
-				Epic =
-				{
-					Multiplier = 2.33
-				},
-				Heroic =
-				{
-					Multiplier = 3.0
-				},
-			},
-			PropertyChanges =
-			{
-				{
-					WeaponNames = { "WeaponLobSpecial", "WeaponCastArm", "WeaponStaffBall", "WeaponStaffSwing5", "WeaponDaggerThrow", "WeaponDagger5" },
-					ChangeValue = 0.90,
-					SourceIsMultiplier = true,
-					SpeedPropertyChanges = true,
 				}
 			},
-			WeaponSpeedMultiplier =
+			
+			OnSprintEndAction =
 			{
-				WeaponNames = { "WeaponTorch", "WeaponTorchSpecial", "WeaponLob", "WeaponLobSpecial", "WeaponAxeBlock2", "WeaponAxeSpin", "WeaponCastArm", "WeaponStaffBall", "WeaponStaffSwing5", "WeaponDaggerThrow", "WeaponDagger5" },
-				WeaponNamesLookup = lookup,
-				Value =
-				{
-					BaseValue = 0.90,
-					SourceIsMultiplier = true,
-				},
-				ReportValues = { ReportedWeaponMultiplier = "Value" }
+				FunctionName = "",
 			},
-			ExtractValues =
+			OnBlinkEndAction =
 			{
-				{
-					Key = "ReportedWeaponMultiplier",
-					ExtractAs = "TooltipSpeed",
-					Format = "NegativePercentDelta"
-				},
-			}
+				FunctionName = "",
+				FunctionArgs = {},
+			},
 		})
 	end
 
-	if config.CardChanges.Unseen then
-		OverwriteTableKeys(MetaUpgradeCardData.ManaOverTime, {
-			Cost = 2
-		})
-	end
+	-- if config.CardChanges.Messenger.Enabled then
+	-- 	sjson.hook(textfile, function(sjsonData)
+	-- 		for _, v in ipairs(sjsonData.Texts) do
+	-- 			if v.Id == "BonusDodge" or v.Id == "DodgeBonusMetaUpgrade" then
+	-- 				v.Description = "You move and {$Keywords.Sprint} {#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipSpeed}% {#Prev}faster."
+	-- 			end
+	-- 		end
+	-- 	end)
 
-	if config.CardChanges.Death then
+	-- 	OverwriteTableKeys(TraitData.DodgeBonusMetaUpgrade, {
+	-- 		RarityLevels =
+	-- 		{
+	-- 			Common =
+	-- 			{
+	-- 				Multiplier = 1
+	-- 			},
+	-- 			Rare =
+	-- 			{
+	-- 				Multiplier = 1.5
+	-- 			},
+	-- 			Epic =
+	-- 			{
+	-- 				Multiplier = 2.0
+	-- 			},
+	-- 			Heroic =
+	-- 			{
+	-- 				Multiplier = 2.5
+	-- 			},
+	-- 		},
+	-- 		PropertyChanges =
+	-- 		{
+	-- 			{
+	-- 				WeaponNames = { "WeaponSprint" },
+	-- 				WeaponProperty = "SelfVelocity",
+	-- 				BaseValue = 119,
+	-- 				ChangeType = "Add",
+	-- 				ExcludeLinked = true,
+	-- 			},
+	-- 			{
+	-- 				WeaponNames = { "WeaponSprint" },
+	-- 				WeaponProperty = "SelfVelocityCap",
+	-- 				BaseValue = 53,
+	-- 				ChangeType = "Add",
+	-- 				ExcludeLinked = true,
+	-- 			},
+	-- 			{
+	-- 				UnitProperty = "Speed",
+	-- 				ChangeType = "Multiply",
+	-- 				BaseValue = 1.06,
+	-- 				SourceIsMultiplier = true,
+	-- 				ReportValues = { ReportedBaseSpeed = "ChangeValue" },
+	-- 			},
+	-- 		},
+	-- 		ExtractValues = {
+	-- 			{
+	-- 				Key = "ReportedBaseSpeed",
+	-- 				ExtractAs = "TooltipSpeed",
+	-- 				Format = "PercentDelta",
+	-- 			},
+	-- 		}
+	-- 	})
+	-- end
+
+	-- if config.CardChanges.Night.Enabled then
+
+	-- 	sjson.hook(textfile, function(sjsonData)
+	-- 		for _, v in ipairs(sjsonData.Texts) do
+	-- 			if v.Id == "MagicCrit" or v.Id == "MagicCritMetaUpgrade_Tray" then
+	-- 				v.Description = "You {$Keywords.HoldNoTooltip} your {$Keywords.Omega} {#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipSpeed}% {#Prev}faster."
+	-- 			end
+	-- 		end
+	-- 	end)
+
+	-- 	local lookup = ToLookup({ "WeaponTorch", "WeaponTorchSpecial", "WeaponLob", "WeaponLobSpecial", "WeaponAxeBlock2", "WeaponAxeSpin", "WeaponCastArm", "WeaponStaffBall", "WeaponStaffSwing5", "WeaponDaggerThrow", "WeaponDagger5" })
+
+	-- 	OverwriteTableKeys(TraitData.MagicCritMetaUpgrade, {
+	-- 		SetupFunction = {},
+	-- 		RarityLevels =
+	-- 		{
+	-- 			Common =
+	-- 			{
+	-- 				Multiplier = 1
+	-- 			},
+	-- 			Rare =
+	-- 			{
+	-- 				Multiplier = 1.67
+	-- 			},
+	-- 			Epic =
+	-- 			{
+	-- 				Multiplier = 2.33
+	-- 			},
+	-- 			Heroic =
+	-- 			{
+	-- 				Multiplier = 3.0
+	-- 			},
+	-- 		},
+	-- 		PropertyChanges =
+	-- 		{
+	-- 			{
+	-- 				WeaponNames = { "WeaponLobSpecial", "WeaponCastArm", "WeaponStaffBall", "WeaponStaffSwing5", "WeaponDaggerThrow", "WeaponDagger5" },
+	-- 				ChangeValue = 0.90,
+	-- 				SourceIsMultiplier = true,
+	-- 				SpeedPropertyChanges = true,
+	-- 			}
+	-- 		},
+	-- 		WeaponSpeedMultiplier =
+	-- 		{
+	-- 			WeaponNames = { "WeaponTorch", "WeaponTorchSpecial", "WeaponLob", "WeaponLobSpecial", "WeaponAxeBlock2", "WeaponAxeSpin", "WeaponCastArm", "WeaponStaffBall", "WeaponStaffSwing5", "WeaponDaggerThrow", "WeaponDagger5" },
+	-- 			WeaponNamesLookup = lookup,
+	-- 			Value =
+	-- 			{
+	-- 				BaseValue = 0.90,
+	-- 				SourceIsMultiplier = true,
+	-- 			},
+	-- 			ReportValues = { ReportedWeaponMultiplier = "Value" }
+	-- 		},
+	-- 		ExtractValues =
+	-- 		{
+	-- 			{
+	-- 				Key = "ReportedWeaponMultiplier",
+	-- 				ExtractAs = "TooltipSpeed",
+	-- 				Format = "NegativePercentDelta"
+	-- 			},
+	-- 		},
+	-- 		AddOutgoingCritModifiers =
+	-- 		{
+	-- 			IsEx = true,
+	-- 			DifferentOmegaChance = {},
+	-- 			ReportValues = {}
+	-- 		},
+	-- 		OnProjectileDeathFunction =
+	-- 		{
+	-- 			Name = "",
+	-- 		},
+	-- 		OnWeaponFiredFunctions =
+	-- 		{
+	-- 			ValidWeapons = WeaponSets.HeroAllWeaponsAndSprint,
+	-- 			FunctionName = "",
+	-- 		},
+	-- 	})
+	-- end
+
+	-- if config.CardChanges.Unseen then
+	-- 	OverwriteTableKeys(MetaUpgradeCardData.ManaOverTime, {
+	-- 		Cost = 3
+	-- 	})
+	-- end
+
+	if config.CardChanges.Night then
 
 		sjson.hook(textfile, function(sjsonData)
 			for _, v in ipairs(sjsonData.Texts) do
-				if v.Id == "MagicCrit" or v.Id == "MagicCritMetaUpgrade" then
+				if v.Id == "MagicCrit" or v.Id == "MagicCritMetaUpgrade_Tray" then
 					v.Description = "Your {$Keywords.Omega} deal {#UpgradeFormat}{$TooltipData.ExtractData.TooltipDamageBonus:P} {#Prev}damage."
 				end
 			end
 		end)
 
 		OverwriteTableKeys(TraitData.MagicCritMetaUpgrade, {
-			AddOutgoingCritModifiers = {},
 			RarityLevels =
 			{
 				Common =
@@ -625,7 +695,7 @@ if config.CardChanges.Enabled then
 			},
 			AddOutgoingDamageModifiers =
 			{
-				ValidWeapons = WeaponSets.HeroAllWeapons,
+				ValidWeapons = WeaponSets.HeroAllWeaponsAndSprint,
 				ExMultiplier =
 				{
 					BaseValue = 1.15,
@@ -660,6 +730,21 @@ if config.CardChanges.Enabled then
 					Format = "PercentDelta",
 				},
 			},
+			AddOutgoingCritModifiers =
+			{
+				IsEx = true,
+				DifferentOmegaChance = {},
+				ReportValues = {}
+			},
+			OnProjectileDeathFunction =
+			{
+				Name = "",
+			},
+			OnWeaponFiredFunctions =
+			{
+				ValidWeapons = WeaponSets.HeroAllWeaponsAndSprint,
+				FunctionName = "",
+			},
 		})
 	end
 
@@ -686,7 +771,7 @@ if config.CardChanges.Enabled then
 
 		sjson.hook(textfile, function(sjsonData)
 			for _, v in ipairs(sjsonData.Texts) do
-				if v.Id == "MetaToRunUpgrade" or v.Id == "MetaToRunMetaUpgrade" then
+				if v.Id == "MetaToRunUpgrade" or v.Id == "MetaToRunMetaUpgrade_Tray" then
 					v.Description = "Increases the {$Keywords.Rarity} of your {$Keywords.Keepsakes} by {#BoldFormatGraft}1 Rank {#Prev} ."
 				end
 			end

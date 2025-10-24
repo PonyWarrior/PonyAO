@@ -21,7 +21,7 @@ if config.TranquilGainRework.Enabled then
 		if not regenTrait or HasThread("DemeterRegen") then
 			return
 		end
-		if (CurrentRun.Hero.Mana / CurrentRun.Hero.MaxMana) > 0.1 then
+		if (CurrentRun.Hero.Mana / CurrentRun.Hero.MaxMana) > config.TranquilGainRework.ManaThreshold then
 			return
 		end
 		if CurrentRun.CurrentRoom.DemeterRegenProcTimes == nil then
@@ -30,11 +30,11 @@ if config.TranquilGainRework.Enabled then
 			CurrentRun.CurrentRoom.DemeterRegenProcTimes = CurrentRun.CurrentRoom.DemeterRegenProcTimes + 1
 		end
 		local traitArgs = regenTrait.SetupFunction.Args
-		local delay = traitArgs.RegenPenaltyDuration +
-		((CurrentRun.CurrentRoom.DemeterRegenProcTimes - 1) * traitArgs.DelayIncreaseDuration)
-		CreateAnimation({ Name = traitArgs.ManaRegenStartFx, DestinationId = CurrentRun.Hero.ObjectId, OffsetX = 0, Scale = 10 })
+		local delay = traitArgs.RegenPenaltyDuration + ((CurrentRun.CurrentRoom.DemeterRegenProcTimes - 1) * traitArgs.DelayIncreaseDuration)
+		CreateAnimation({ Name = traitArgs.ManaRegenStartFx, DestinationId = CurrentRun.Hero.ObjectId, OffsetX = 0 })
 		PlaySound({ Name = traitArgs.ManaRegenStartSound, Id = CurrentRun.Hero.ObjectId })
 		wait(delay, "DemeterRegen")
+		StopAnimation({ Name = traitArgs.ManaRegenStartFx, DestinationId = CurrentRun.Hero.ObjectId })
 		RefillMana()
 	end
 

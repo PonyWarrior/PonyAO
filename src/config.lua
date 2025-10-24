@@ -24,12 +24,6 @@ local config = {
 		Night = {
 			Enabled = true
 		},
-		Unseen = {
-			Enabled = true
-		},
-		Death = {
-			Enabled = true
-		},
 		Artificer = {
 			Enabled = true
 		},
@@ -38,7 +32,7 @@ local config = {
 		Enabled = true,
 		InitialDelay = 3.0,
 		BaseDelayIncrease = 1.0,
-		ManaThreshold = 0.1,
+		ManaThreshold = 0.15,
 		CommonMultiplier = 1.0,
 		RareMultiplier = 0.75,
 		EpicMultiplier = 0.5,
@@ -157,17 +151,8 @@ local description = {
 		SwiftRunner = {
 			Enabled = "Enable to make the swift runner increase the number of dashes you can do by 1 (at all ranks)."
 		},
-		Messenger = {
-			Enabled = "Enable to make the messenger increase your movement speed by 6/9/12/15%."
-		},
 		Night = {
-			Enabled = "Enable to make night increase your omega channeling speed by 10/17/23/30%."
-		},
-		Unseen = {
-			Enabled = "Enable to make the unseen cost 2 grasp instead of 5."
-		},
-		Death = {
-			Enabled = "Enable to make death increase your omega damage by 15/27/38/50%."
+			Enabled = "Enable to make nighy increase your omega damage by 15/27/38/50%."
 		},
 		Artificer = {
 			Enabled = "Enable to make the artificer increase the rarity of your keepsakes by 1 level (at all ranks)."

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Fixed all card issues (descriptions...)
+- Removed Death, The Messenger and Unseen card changes
+- Night card now increases omega damage (previously Death)
+- Fixed Demeter tranquil gain rework animation and sound, raised default mana threshold to 15% from 10%
+- Fixed Polyphemus jump doing damage (thanks to dwbl)
+- Fixed Staff Improvements not working
+
+
 ## [0.5.6] - 2025-08-14
 
 - Fixed crash when viewing vows in boon tray

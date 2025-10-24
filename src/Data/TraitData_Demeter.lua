@@ -31,8 +31,8 @@ OverwriteTableKeys(TraitData.DemeterManaBoon, {
 			DelayIncreaseDuration = {
 				BaseValue = config.TranquilGainRework.BaseDelayIncrease
 			},
-			ManaRegenStartFx = "ManaRegenFlashFx",
-			ManaRegenStartSound = "/Leftovers/SFX/SprintChargeUp",
+			ManaRegenStartFx = "DemeterManaBoonFx",
+			ManaRegenStartSound = "/SFX/Player Sounds/DemeterTranquilGainStart",
 			ManaThreshold = config.TranquilGainRework.ManaThreshold,
 			ReportValues = { ReportedManaThreshold = "ManaThreshold", ReportedRegenPenaltyDuration = "RegenPenaltyDuration", ReportedRegenDelayDuration = "DelayIncreaseDuration" }
 		},
