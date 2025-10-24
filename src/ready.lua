@@ -806,7 +806,7 @@ if config.TestamentsChanges.Enabled then
 end
 
 if config.PolyphemusJump.Enabled then
-	local projectileFile = rom.path.combine(rom.paths.Content, 'Game/Projectiles/EnemyProjectiles.sjson')
+	local projectileFile = rom.path.combine(rom.paths.Content, 'Game/Projectiles/Enemy_BiomeN_Projectiles.sjson')
 
 	sjson.hook(projectileFile, function(sjsonData)
 		for _, v in ipairs(sjsonData.Projectiles) do
