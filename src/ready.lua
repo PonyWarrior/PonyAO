@@ -730,12 +730,7 @@ if config.CardChanges.Enabled then
 					Format = "PercentDelta",
 				},
 			},
-			AddOutgoingCritModifiers =
-			{
-				IsEx = true,
-				DifferentOmegaChance = {},
-				ReportValues = {}
-			},
+			AddOutgoingCritModifiers = nil,
 			OnProjectileDeathFunction =
 			{
 				Name = "",
