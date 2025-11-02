@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.8] - 2025-11-02
+
 - Fixed a crash with death card and supay aspect
 
 ## [0.5.7] - 2025-10-24
@@ -141,7 +143,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version of the mod!
 
-[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.7...HEAD
+[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.8...HEAD
+[0.5.8]: https://github.com/PonyWarrior/PonyAO/compare/0.5.7...0.5.8
 [0.5.7]: https://github.com/PonyWarrior/PonyAO/compare/0.5.6...0.5.7
 [0.5.6]: https://github.com/PonyWarrior/PonyAO/compare/0.5.5...0.5.6
 [0.5.5]: https://github.com/PonyWarrior/PonyAO/compare/0.5.4...0.5.5
