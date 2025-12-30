@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.5.9] - 2025-12-30
+
 Fix crash relating to a nil keepsake and artificer upgrade.
 
 ## [0.5.8] - 2025-11-02
@@ -144,7 +147,8 @@ Fix crash relating to a nil keepsake and artificer upgrade.
 
 - First version of the mod!
 
-[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.8...HEAD
+[unreleased]: https://github.com/PonyWarrior/PonyAO/compare/0.5.9...HEAD
+[0.5.9]: https://github.com/PonyWarrior/PonyAO/compare/0.5.8...0.5.9
 [0.5.8]: https://github.com/PonyWarrior/PonyAO/compare/0.5.7...0.5.8
 [0.5.7]: https://github.com/PonyWarrior/PonyAO/compare/0.5.6...0.5.7
 [0.5.6]: https://github.com/PonyWarrior/PonyAO/compare/0.5.5...0.5.6
