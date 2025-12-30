@@ -758,7 +758,7 @@ if config.CardChanges.Enabled then
 
 		function IsArtificerUpgradeValid(traitName)
 			local trait = TraitData[traitName]
-			if trait.RarityLevels == nil or trait.RarityLevels.Heroic == nil then
+			if not trait or trait.RarityLevels == nil or trait.RarityLevels.Heroic == nil then
 				return false
 			end
 			return true
